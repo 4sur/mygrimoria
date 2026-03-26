@@ -18,7 +18,11 @@ export const api = {
             method: 'GET',
             headers,
         });
-        if (!response.ok) throw new Error(`API error: ${response.statusText}`);
+        if (!response.ok) {
+            const error = new Error(`API error: ${response.statusText}`);
+            (error as any).status = response.status;
+            throw error;
+        }
         return response.json();
     },
 
@@ -29,7 +33,11 @@ export const api = {
             headers,
             body: JSON.stringify(body),
         });
-        if (!response.ok) throw new Error(`API error: ${response.statusText}`);
+        if (!response.ok) {
+            const error = new Error(`API error: ${response.statusText}`);
+            (error as any).status = response.status;
+            throw error;
+        }
         return response.json();
     },
 
@@ -40,7 +48,11 @@ export const api = {
             headers,
             body: JSON.stringify(body),
         });
-        if (!response.ok) throw new Error(`API error: ${response.statusText}`);
+        if (!response.ok) {
+            const error = new Error(`API error: ${response.statusText}`);
+            (error as any).status = response.status;
+            throw error;
+        }
         return response.json();
     },
 
@@ -50,7 +62,11 @@ export const api = {
             method: 'DELETE',
             headers,
         });
-        if (!response.ok) throw new Error(`API error: ${response.statusText}`);
+        if (!response.ok) {
+            const error = new Error(`API error: ${response.statusText}`);
+            (error as any).status = response.status;
+            throw error;
+        }
         return response.json();
     },
 };

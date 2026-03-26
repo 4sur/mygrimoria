@@ -57,9 +57,12 @@ export default function ProfilePage() {
                 gender: data.gender || '',
                 prompt_context: data.prompt_context || ''
             });
-        } catch (err) {
+        } catch (err: any) {
             console.error('Failed to load profile:', err);
-            setError('Failed to load profile');
+            // If 401, user is not logged in - that's OK, just show empty form
+            if (err?.status === 401 || err?.message?.includes('401')) {
+                console.log('User not authenticated, showing empty form');
+            }
         } finally {
             setLoading(false);
         }
@@ -83,9 +86,13 @@ export default function ProfilePage() {
             setProfile({ ...profile, ...updated } as ProfileData);
             setSaved(true);
             setTimeout(() => setSaved(false), 3000);
-        } catch (err) {
+        } catch (err: any) {
             console.error('Failed to save profile:', err);
-            setError('Failed to save profile');
+            if (err?.message?.includes('401') || err?.status === 401) {
+                setError('Please login to save profile');
+            } else {
+                setError('Failed to save profile');
+            }
         } finally {
             setSaving(false);
         }
