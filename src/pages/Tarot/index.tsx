@@ -119,7 +119,7 @@ export default function TarotPage() {
                 const spreadData = await drawTarotCards();
                 setSpread(spreadData);
                 setDrawnCount(1);
-                fetchInterpretation(spreadData);
+                await fetchInterpretation(spreadData);
             } catch (err) {
                 console.error(err);
             } finally {

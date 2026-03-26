@@ -115,7 +115,7 @@ export default function RunesPage() {
                 const spreadData = await drawRunes();
                 setSpread(spreadData);
                 setDrawnCount(1);
-                fetchInterpretation(spreadData);
+                await fetchInterpretation(spreadData);
             } catch (err) {
                 console.error(err);
             } finally {

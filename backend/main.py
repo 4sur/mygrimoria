@@ -21,13 +21,10 @@ from constants import MAJOR_ARCANA, ELDER_FUTHARK
 
 app = FastAPI(title="My Grimoria API")
 
-# Configure CORS
-origins_str = os.getenv("ALLOWED_ORIGINS", "*")
-origins = [o.strip() for o in origins_str.split(",")] if origins_str != "*" else ["*"]
-
+# Configure CORS - allow all for development
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
