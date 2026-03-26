@@ -1,0 +1,356 @@
+/* ============================================
+   ZEN I CHING — Unified Design System
+   Matches src/index.css + src/App.tsx exactly
+   ============================================ */
+
+/* ---- Design Tokens ---- */
+:root {
+  --bg: #ffffff;
+  --ink: #1a1a1a;
+  --paper: #fcfcfc;
+}
+
+/* ---- Base Reset ---- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--ink);
+  font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  margin: 0;
+}
+
+/* ============================================
+   TYPOGRAPHY
+   ============================================ */
+.font-serif {
+  font-family: "Noto Serif JP", serif;
+}
+
+.font-sans {
+  font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+.font-mono {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+}
+
+/* ============================================
+   HEADER — Matches App.tsx exactly
+   Padding: p-8 (2rem all sides)
+   Logo: ∞ icon + "ZEN I CHING" in font-serif tracking-tighter font-bold
+   ============================================ */
+.zen-header {
+  padding: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(26, 26, 26, 0.05);
+  position: sticky;
+  top: 0;
+  background: rgba(255, 255, 255, 0.80);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 50;
+}
+
+.dark .zen-header {
+  background: rgba(26, 26, 26, 0.80);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Logo group */
+.zen-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  /* gap-3 */
+}
+
+.zen-logo-icon {
+  width: 2.5rem;
+  /* w-10 */
+  height: 2.5rem;
+  /* h-10 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  overflow: hidden;
+  border: 1px solid rgba(26, 26, 26, 0.1);
+}
+
+.zen-logo-title {
+  font-family: "Noto Serif JP", serif;
+  font-size: 1.125rem;
+  /* text-lg / approx text-xl */
+  font-weight: 700;
+  letter-spacing: -0.05em;
+  /* tracking-tighter */
+  text-transform: uppercase;
+  color: #1a1a1a;
+}
+
+.dark .zen-logo-title {
+  color: #fcfcfc;
+}
+
+/* Nav links */
+.zen-nav-link {
+  font-size: 0.75rem;
+  /* text-xs */
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  /* tracking-widest */
+  text-transform: uppercase;
+  color: rgba(26, 26, 26, 0.40);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.zen-nav-link:hover {
+  color: #1a1a1a;
+}
+
+.dark .zen-nav-link {
+  color: rgba(255, 255, 255, 0.40);
+}
+
+.dark .zen-nav-link:hover {
+  color: #fcfcfc;
+}
+
+.zen-nav-link-active {
+  color: #1a1a1a;
+  border-bottom: 1px solid #1a1a1a;
+  padding-bottom: 2px;
+}
+
+.dark .zen-nav-link-active {
+  color: #fcfcfc;
+  border-color: #fcfcfc;
+}
+
+/* ============================================
+   BUTTONS — Matches App.tsx exactly
+   ============================================ */
+
+/* Primary: solid ink pill */
+.zen-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  background-color: #1a1a1a;
+  color: #ffffff;
+  padding: 0.75rem 2rem;
+  /* py-3 px-8 */
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: 1px solid #1a1a1a;
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  white-space: nowrap;
+}
+
+.zen-btn-primary:hover {
+  transform: translateY(-2px);
+}
+
+.dark .zen-btn-primary {
+  background-color: #fcfcfc;
+  color: #1a1a1a;
+  border-color: #fcfcfc;
+}
+
+/* Ghost: outlined pill */
+.zen-btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  background-color: transparent;
+  color: #1a1a1a;
+  padding: 0.75rem 2rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: 1px solid rgba(26, 26, 26, 0.20);
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease;
+  white-space: nowrap;
+}
+
+.zen-btn-ghost:hover {
+  border-color: #1a1a1a;
+}
+
+.dark .zen-btn-ghost {
+  color: #fcfcfc;
+  border-color: rgba(255, 255, 255, 0.20);
+}
+
+.dark .zen-btn-ghost:hover {
+  border-color: #fcfcfc;
+}
+
+/* Icon button: round hover area */
+.zen-btn-icon {
+  padding: 0.5rem;
+  /* p-2 */
+  border-radius: 9999px;
+  background: transparent;
+  border: none;
+  color: #1a1a1a;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.zen-btn-icon:hover {
+  background: rgba(26, 26, 26, 0.05);
+}
+
+.dark .zen-btn-icon {
+  color: #fcfcfc;
+}
+
+.dark .zen-btn-icon:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* ============================================
+   FOOTER — Matches App.tsx exactly
+   Minimal decorative footer, opacity-30
+   ============================================ */
+.zen-footer {
+  padding: 2rem;
+  text-align: center;
+  border-top: 1px solid rgba(26, 26, 26, 0.05);
+}
+
+.zen-footer-inner {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  /* space-x-8 */
+  font-size: 0.625rem;
+  /* text-[10px] */
+  letter-spacing: 0.5em;
+  /* tracking-[0.5em] */
+  text-transform: uppercase;
+  opacity: 0.3;
+  font-family: "Inter", sans-serif;
+}
+
+/* ============================================
+   CARDS
+   ============================================ */
+.zen-card {
+  border: 1px solid rgba(26, 26, 26, 0.1);
+  border-radius: 0.75rem;
+  /* rounded-xl */
+  overflow: hidden;
+  transition: box-shadow 0.3s ease;
+}
+
+.dark .zen-card {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* ============================================
+   BORDERS & SURFACES
+   ============================================ */
+.zen-border {
+  border: 1px solid rgba(26, 26, 26, 0.1);
+}
+
+.dark .zen-border {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.zen-divider {
+  border: none;
+  border-top: 1px solid rgba(26, 26, 26, 0.05);
+}
+
+.dark .zen-divider {
+  border-color: rgba(255, 255, 255, 0.05);
+}
+
+.zen-surface {
+  background-color: var(--paper);
+}
+
+.dark .zen-surface {
+  background-color: #111111;
+}
+
+/* Markdown / long-form content */
+.zen-prose {
+  font-family: "Noto Serif JP", serif;
+  line-height: 1.8;
+}
+
+.zen-prose p {
+  margin-bottom: 1.5rem;
+}
+
+.zen-prose h1,
+.zen-prose h2,
+.zen-prose h3 {
+  font-weight: 700;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+/* ============================================
+   SCROLLBAR
+   ============================================ */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(26, 26, 26, 0.1);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(26, 26, 26, 0.2);
+}
+
+/* ============================================
+   MICRO-ANIMATIONS
+   ============================================ */
+.zen-fade-in {
+  animation: zenFadeIn 0.6s ease-out both;
+}
+
+@keyframes zenFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

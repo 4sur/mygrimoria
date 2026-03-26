@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Zen 404 The Path Not Found</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Noto+Serif+JP:wght@300;400;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link href="../unified.css" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "ink": "#1a1a1a",
+                        "paper": "#fcfcfc",
+                    },
+                    fontFamily: {
+                        "sans": ["Inter", "sans-serif"],
+                        "serif": ["Noto Serif JP", "serif"],
+                    },
+                },
+            },
+        }
+    </script>
+</head>
+
+<body class="bg-white dark:bg-ink text-ink dark:text-paper font-sans antialiased min-h-screen flex flex-col">
+    <!-- Header: matches App.tsx header -->
+    <header class="zen-header">
+        <div class="zen-logo">
+            <div class="zen-logo-icon">
+                <span class="material-symbols-outlined" style="font-size:1.25rem">all_inclusive</span>
+            </div>
+            <h1 class="zen-logo-title">ZEN I CHING</h1>
+        </div>
+        <nav class="hidden md:flex items-center gap-8">
+            <a class="zen-nav-link" href="#">Readings</a>
+            <a class="zen-nav-link" href="#">Journal</a>
+            <a class="zen-nav-link" href="#">About</a>
+        </nav>
+        <a href="#" class="zen-btn-primary">Go Home</a>
+    </header>
+    <!-- Centered Content -->
+    <main class="flex-1 flex flex-col items-center justify-center p-8">
+        <div class="w-full max-w-[960px] flex flex-col items-center justify-center gap-12 text-center">
+            <!-- Visual Centerpiece: Enso Circle -->
+            <div class="relative flex items-center justify-center w-64 h-64 md:w-96 md:h-96">
+                <svg class="w-full h-full text-ink dark:text-white opacity-90" fill="none" viewbox="0 0 200 200"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path d="M100 25C60 25 25 60 25 100C25 140 60 175 100 175C135 175 165 150 173 115"
+                        stroke="currentColor" stroke-dasharray="400" stroke-dashoffset="0" stroke-linecap="round"
+                        stroke-width="8" style="filter: url(#ink-texture);">
+                    </path>
+                    <path d="M173 115C174 110 175 105 175 100" stroke="currentColor" stroke-linecap="round"
+                        stroke-opacity="0.5" stroke-width="6"></path>
+                    <defs>
+                        <filter height="140%" id="ink-texture" width="140%" x="-20%" y="-20%">
+                            <feturbulence basefrequency="0.04" numoctaves="3" result="noise" type="fractalNoise">
+                            </feturbulence>
+                            <fedisplacementmap in="SourceGraphic" in2="noise" scale="5"></fedisplacementmap>
+                        </filter>
+                    </defs>
+                </svg>
+            </div>
+            <!-- Typography Section -->
+            <div class="flex flex-col items-center gap-6 max-w-xl">
+                <h1
+                    class="text-4xl md:text-5xl lg:text-6xl font-serif font-light tracking-tight text-ink dark:text-white leading-tight">
+                    Este camino no ha sido trazado
+                </h1>
+                <p class="text-lg md:text-xl font-serif italic text-ink/60 dark:text-white/60">
+                    Quizás el oráculo te sugiere regresar al centro
+                </p>
+            </div>
+            <div class="mt-8">
+                <button class="zen-btn-ghost">Regresar al Presente</button>
+            </div>
+        </div>
+    </main>
+    <!-- Discrete 404 indicator -->
+    <div class="fixed bottom-16 left-0 right-0 text-center pointer-events-none">
+        <p class="text-xs font-bold tracking-widest text-ink/10 dark:text-white/10">404</p>
+    </div>
+    <!-- Footer: matches App.tsx -->
+    <footer class="zen-footer">
+        <div class="zen-footer-inner">
+            <span>Heaven</span><span>Earth</span><span>Water</span><span>Fire</span>
+        </div>
+    </footer>
+</body>
+
+</html>
+</body>
+
+</html>

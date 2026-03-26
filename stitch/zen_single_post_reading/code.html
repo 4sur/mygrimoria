@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Zen Single Post Reading</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Noto+Serif+JP:wght@300;400;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link href="../unified.css" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "ink": "#1a1a1a",
+                        "paper": "#fcfcfc",
+                    },
+                    fontFamily: {
+                        "sans": ["Inter", "sans-serif"],
+                        "serif": ["Noto Serif JP", "serif"],
+                    },
+                },
+            },
+        }
+    </script>
+</head>
+
+<body
+    class="bg-white dark:bg-ink text-ink dark:text-paper font-sans min-h-screen flex flex-col antialiased selection:bg-ink selection:text-white">
+    <div class="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden">
+        <!-- Header: matches App.tsx header -->
+        <header class="zen-header">
+            <div class="zen-logo">
+                <div class="zen-logo-icon">
+                    <span class="material-symbols-outlined" style="font-size:1.25rem">all_inclusive</span>
+                </div>
+                <h1 class="zen-logo-title">ZEN I CHING</h1>
+            </div>
+            <nav class="hidden md:flex items-center gap-8">
+                <a class="zen-nav-link" href="#">Readings</a>
+                <a class="zen-nav-link" href="#">Journal</a>
+                <a class="zen-nav-link" href="#">About</a>
+            </nav>
+            <div class="flex items-center gap-4">
+                <button class="zen-btn-icon">
+                    <span class="material-symbols-outlined" style="font-size:1.25rem">search</span>
+                </button>
+                <button class="zen-btn-primary">Subscribe</button>
+            </div>
+        </header>
+        <!-- Main Content -->
+        <main class="flex-grow flex flex-col">
+            <!-- Hero Header -->
+            <section
+                class="relative h-[85vh] w-full flex flex-col items-center justify-center text-center px-4 overflow-hidden bg-paper dark:bg-ink">
+                <div class="absolute inset-0 bg-cover bg-center grayscale contrast-110 opacity-40 dark:opacity-20"
+                    style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC6-LtcGPrVuMMxYodhL6w_-fWe5NRFj-g0PRGa3VazeLr-bxmRQ83pZCspJ9066duInOsvDfjgPS4JCr4Hx2HY4AHq2hgcNkrtQ4kEW1etyRxEh4hg6cdnqbTrO1nIELxcueWoUriGRDd6YUSgzrJmsPraUOtAx-dAy45IVHY1KFKgboCNbbQm8YCDOXeQcFeOQpAZ_XcuSoGyKmy1kEhzBhwJyo4VSZUZdrOSeVi-QOb70xI5C8xxWoF-gsrgMxM9K3so1nixU4A");'>
+                </div>
+                <div class="relative z-10 max-w-4xl mx-auto flex flex-col items-center">
+                    <span
+                        class="mb-6 inline-block rounded-full border border-ink/10 dark:border-white/10 bg-white/50 dark:bg-ink/50 px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-ink dark:text-white backdrop-blur-sm">
+                        Mindfulness
+                    </span>
+                    <h1
+                        class="font-serif text-5xl md:text-7xl lg:text-8xl font-light tracking-tight text-ink dark:text-white leading-[1.1] mb-6">
+                        The Silence <br /> <span class="italic font-normal">Between Thoughts</span>
+                    </h1>
+                    <p
+                        class="font-sans text-lg md:text-xl text-ink/60 dark:text-white/60 max-w-xl font-medium leading-relaxed">
+                        Exploring the depths of consciousness in a digital age, finding the quiet moments where true
+                        insight begins.
+                    </p>
+                    <div
+                        class="mt-12 flex items-center gap-4 text-ink/40 dark:text-white/40 text-[10px] font-bold tracking-widest uppercase">
+                        <span>By The Oracle</span>
+                        <span class="w-1 h-1 rounded-full bg-ink/20 dark:bg-white/20"></span>
+                        <span>Oct 14, 2023</span>
+                    </div>
+                </div>
+                <div class="absolute bottom-10 left-1/2 -translate-x-1/2 text-ink/30 dark:text-white/30 animate-bounce">
+                    <span class="material-symbols-outlined !text-4xl font-light">keyboard_arrow_down</span>
+                </div>
+            </section>
+            <!-- Article Content -->
+            <article class="max-w-[680px] mx-auto px-6 py-20 md:py-32">
+                <!-- Intro Paragraph with Drop Cap -->
+                <p class="text-xl md:text-2xl leading-relaxed text-ink/80 dark:text-white/80 font-serif mb-12">
+                    <span
+                        class="float-left text-7xl md:text-8xl leading-[0.8] pr-4 font-normal mt-[-6px] text-ink dark:text-white">I</span>n
+                    the quiet moments of the morning, we find our true selves waiting patiently. We rush through our
+                    days,
+                    cluttered with notifications and deadlines, often forgetting that the most profound wisdom arises
+                    not from
+                    doing, but from simply being.
+                </p>
+                <!-- Body Text -->
+                <div class="space-y-8 font-serif text-lg md:text-xl leading-8 text-ink/70 dark:text-white/70">
+                    <p>
+                        The modern world is designed to distract. Every ping, every buzz is a calculated attempt to pull
+                        your
+                        consciousness away from the center. Yet, the Zen tradition teaches us that the center is
+                        everywhere. It
+                        is not a place you go to; it is a place you come from.
+                    </p>
+                    <p>
+                        When we sit with the Oracle, or when we turn a tarot card, we are not predicting the future. We
+                        are
+                        holding a mirror to the present. The imagery—the archetype—serves as a bridge between the
+                        conscious mind
+                        and the vast, silent ocean of the subconscious.
+                    </p>
+                    <!-- Blockquote -->
+                    <div class="py-12 md:py-16 px-4 md:px-12 my-8 border-y border-ink/5 dark:border-white/5">
+                        <blockquote class="text-center">
+                            <p
+                                class="text-2xl md:text-4xl font-serif italic font-light leading-snug text-ink dark:text-white mb-6">
+                                "Stillness is not the absence of movement, but the absence of resistance."
+                            </p>
+                            <footer class="text-xs font-bold uppercase tracking-widest text-ink/30 dark:text-white/30">
+                                — Zen Proverb
+                            </footer>
+                        </blockquote>
+                    </div>
+                    <p>
+                        We often mistake the pause for emptiness, but within that pause lies potential energy. It is the
+                        breath
+                        before the speak, the moment before the dawn. To embrace this silence is to embrace the fullness
+                        of
+                        existence.
+                    </p>
+                    <p>
+                        Consider the "Card of the Day." It is not a prescription, but a koan. A riddle for your soul to
+                        unravel
+                        throughout the hours. If you draw The Hermit, do not simply seek solitude. Seek the light that
+                        shines
+                        only when you stop looking outside yourself.
+                    </p>
+                </div>
+                <!-- Divider -->
+                <div class="w-16 h-px bg-ink/10 dark:bg-white/10 mx-auto my-20"></div>
+                <!-- Tags & Share -->
+                <div class="flex flex-col md:flex-row justify-between items-center gap-6 font-sans">
+                    <div class="flex gap-2">
+                        <a class="px-3 py-1 bg-paper dark:bg-ink/50 border border-ink/10 dark:border-white/10 rounded text-[10px] font-bold uppercase tracking-widest text-ink/40 dark:text-white/40 hover:border-ink dark:hover:border-white transition-colors"
+                            href="#">Meditation</a>
+                        <a class="px-3 py-1 bg-paper dark:bg-ink/50 border border-ink/10 dark:border-white/10 rounded text-[10px] font-bold uppercase tracking-widest text-ink/40 dark:text-white/40 hover:border-ink dark:hover:border-white transition-colors"
+                            href="#">Philosophy</a>
+                    </div>
+                    <div class="flex gap-6 text-ink/30 dark:text-white/30">
+                        <button class="hover:text-ink dark:hover:text-white transition-colors">
+                            <span class="material-symbols-outlined !text-xl">share</span>
+                        </button>
+                        <button class="hover:text-ink dark:hover:text-white transition-colors">
+                            <span class="material-symbols-outlined !text-xl">bookmark</span>
+                        </button>
+                        <button class="hover:text-ink dark:hover:text-white transition-colors">
+                            <span class="material-symbols-outlined !text-xl">favorite</span>
+                        </button>
+                    </div>
+                </div>
+            </article>
+            <!-- Headless / AI Interactive Section -->
+            <section class="bg-paper dark:bg-ink/30 border-t border-ink/5 dark:border-white/5 py-20">
+                <div class="max-w-[960px] mx-auto px-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20">
+                        <!-- AI Card Oracle -->
+                        <div
+                            class="flex flex-col items-center justify-center text-center p-8 border border-ink/5 dark:border-white/5 bg-white dark:bg-ink rounded-xl">
+                            <span
+                                class="text-[10px] font-bold tracking-widest uppercase text-ink/30 dark:text-white/30 mb-4">Daily
+                                Reflection</span>
+                            <h3 class="font-serif text-2xl mb-8 text-ink dark:text-white">Your Card of the Day</h3>
+                            <!-- Card Placeholder -->
+                            <div class="relative group cursor-pointer w-48 h-72 mb-8">
+                                <div
+                                    class="relative transition-transform duration-700 w-full h-full shadow-xl bg-ink dark:bg-white/5 rounded-xl flex items-center justify-center overflow-hidden border border-ink/10 dark:border-white/10">
+                                    <div class="flex flex-col items-center gap-2">
+                                        <span
+                                            class="material-symbols-outlined !text-5xl text-white/50 dark:text-white/20">visibility</span>
+                                        <span
+                                            class="text-white/50 dark:text-white/20 text-[10px] tracking-widest font-bold uppercase">Reveal</span>
+                                    </div>
+                                    <div class="absolute inset-0 bg-gradient-to-br from-transparent to-black/20"></div>
+                                </div>
+                            </div>
+                            <p class="text-[11px] font-bold uppercase tracking-widest text-ink/40 dark:text-white/40">
+                                Tap to reveal the archetype
+                            </p>
+                        </div>
+                        <!-- Recommended Readings -->
+                        <div class="flex flex-col justify-center">
+                            <h3
+                                class="font-serif text-2xl mb-8 border-b border-ink/5 dark:border-white/5 pb-4 text-ink dark:text-white">
+                                Recommended Readings</h3>
+                            <div class="flex flex-col gap-8">
+                                <a class="group flex gap-6 items-start" href="#">
+                                    <div
+                                        class="w-20 h-20 shrink-0 bg-paper dark:bg-ink/50 overflow-hidden rounded-lg border border-ink/5 dark:border-white/5">
+                                        <img alt="Thumbnail"
+                                            class="w-full h-full object-cover grayscale group-hover:scale-105 transition-transform duration-500"
+                                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8WoVEepC9wGO8-83jnGgoLJP-3dJBdP2ThxKNPxFOnRxQ3EHHFtaAE8YLfIfXXvI-Ud_bq18roGwWdEl6ORMR8FNyiJ0BhiJgoCk_YeglGucUnWQtUiJeGqcKNbjTOtgMMo3Pe5SpRo2Vqa-Fe1XAyuB0Qt-nXzwEcMD3CLFOu2mWCiIu1IjlDItvy_nYn13L6kmGOz2FSVNJQjZyHL2vL3EGNJdePJKkPGFp0ewq3oROCme9gHSuHUXRzmW21GUyQv-45CX5jXI" />
+                                    </div>
+                                    <div>
+                                        <h4
+                                            class="font-serif text-xl leading-tight text-ink dark:text-white group-hover:italic transition-all mb-1">
+                                            The Architecture of Silence</h4>
+                                        <p class="text-xs text-ink/40 dark:text-white/40 line-clamp-2">How physical
+                                            spaces
+                                            shape our internal dialogue.</p>
+                                    </div>
+                                </a>
+                                <a class="group flex gap-6 items-start" href="#">
+                                    <div
+                                        class="w-20 h-20 shrink-0 bg-paper dark:bg-ink/50 overflow-hidden rounded-lg border border-ink/5 dark:border-white/5">
+                                        <img alt="Thumbnail"
+                                            class="w-full h-full object-cover grayscale group-hover:scale-105 transition-transform duration-500"
+                                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZWjuRpDiaQ_OUh0gwN-MfGCT5Snjb-wX4FWEi7CVj0x2OfLAH7dxKJvC_tfLufjGWvqHGTCq_spUYW7tOZcJDY5f3QbcqKtxlRzbcP_Yl-_iGVawvMfWOMOQYBB5bkNbZgkmRrO6EbiO31tK2jTXegjHLcRmjoqqQn9HW_0W9j4ee1_EcPBOjiAALAY3LiaWYxkXmqebseo2fybQMUpjP0VgqQ8yB3RQfR1h3xjSH1h-PI5SRg3PZcqXyQ5iY6NPfVyUGZef-YEw" />
+                                    </div>
+                                    <div>
+                                        <h4
+                                            class="font-serif text-xl leading-tight text-ink dark:text-white group-hover:italic transition-all mb-1">
+                                            Shadow Work for Beginners</h4>
+                                        <p class="text-xs text-ink/40 dark:text-white/40 line-clamp-2">Embracing the
+                                            parts of
+                                            yourself you'd rather keep hidden.</p>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        <!-- Footer: matches App.tsx -->
+        <footer class="zen-footer">
+            <div class="zen-footer-inner">
+                <span>Heaven</span><span>Earth</span><span>Water</span><span>Fire</span>
+            </div>
+        </footer>
+    </div>
+</body>
+
+</html>

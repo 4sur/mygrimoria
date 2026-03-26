@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Zen AI Runes Readings</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Noto+Serif+JP:wght@300;400;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link href="../unified.css" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "ink": "#1a1a1a",
+                        "paper": "#fcfcfc",
+                    },
+                    fontFamily: {
+                        "sans": ["Inter", "sans-serif"],
+                        "serif": ["Noto Serif JP", "serif"],
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        .markdown-body p {
+            margin-bottom: 1rem;
+        }
+
+        .markdown-body h1,
+        .markdown-body h2,
+        .markdown-body h3 {
+            font-family: "Noto Serif JP", serif;
+            margin-bottom: 1rem;
+        }
+
+        .markdown-body strong {
+            font-weight: 600;
+        }
+
+        .chat-container {
+            display: none;
+        }
+
+        .chat-message.user {
+            text-align: right;
+            background-color: rgba(26, 26, 26, 0.05);
+        }
+
+        .chat-message.model {
+            text-align: left;
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .dark .chat-message.user {
+            background-color: rgba(252, 252, 252, 0.1);
+        }
+
+        .dark .chat-message.model {
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+
+<body
+    class="bg-white dark:bg-ink text-ink dark:text-paper min-h-screen flex flex-col font-sans antialiased overflow-x-hidden transition-colors duration-300">
+    <!-- Header -->
+    <header class="zen-header flex items-center justify-between p-6">
+        <div class="zen-logo flex items-center gap-4">
+            <div class="zen-logo-icon">
+                <span class="material-symbols-outlined" style="font-size:1.25rem">flare</span>
+            </div>
+            <h1 class="zen-logo-title font-serif tracking-widest text-xl">ZEN RUNES</h1>
+        </div>
+        <div class="hidden md:flex items-center gap-8">
+            <span class="font-serif italic text-lg text-ink/60 dark:text-white/60">3-Rune Cast</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <button class="zen-btn-ghost hover:underline text-sm uppercase tracking-widest">Close Session</button>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow flex flex-col items-center justify-start pt-12 pb-12 px-6 w-full max-w-[1440px] mx-auto">
+
+        <!-- Loading overlay -->
+        <div id="loading"
+            class="absolute inset-0 z-50 flex items-center justify-center bg-white/80 dark:bg-ink/80 backdrop-blur-sm transition-opacity duration-500">
+            <div class="flex flex-col items-center gap-4">
+                <span class="material-symbols-outlined animate-spin text-4xl">sync</span>
+                <p class="font-serif italic tracking-widest">Consulting the stones...</p>
+            </div>
+        </div>
+
+        <!-- The Spread -->
+        <section class="w-full max-w-5xl mb-16 mt-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-16 items-start justify-center" id="card-container">
+                <!-- Cards will be populated dynamically -->
+            </div>
+        </section>
+
+        <!-- AI Insight -->
+        <section class="w-full max-w-[800px] relative mt-8 mb-16 hidden" id="interpretation-section">
+            <div
+                class="border border-ink/10 dark:border-white/10 p-10 md:p-14 bg-paper/50 dark:bg-black/50 backdrop-blur-sm relative rounded-xl">
+                <span
+                    class="absolute top-4 left-4 material-symbols-outlined text-ink/10 dark:text-white/10 text-4xl">format_quote</span>
+                <h2
+                    class="font-serif text-2xl md:text-3xl text-center mb-8 leading-snug text-ink dark:text-white font-light">
+                    The Runemaster's Insight
+                </h2>
+                <div class="space-y-6 markdown-body" id="interpretation-text">
+                    <!-- Dynamic text -->
+                </div>
+                <div class="mt-10 flex justify-center items-center gap-2 opacity-60">
+                    <span class="h-px w-8 bg-ink/30 dark:bg-white/30"></span>
+                    <span class="material-symbols-outlined text-sm">spa</span>
+                    <span class="h-px w-8 bg-ink/30 dark:bg-white/30"></span>
+                </div>
+            </div>
+        </section>
+
+        <!-- User Controls -->
+        <section class="w-full max-w-2xl px-4 hidden" id="controls-section">
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center w-full">
+                <button
+                    class="w-full sm:w-auto min-w-[180px] h-12 border border-ink/10 dark:border-white/10 hover:border-ink dark:hover:border-white bg-transparent text-ink dark:text-white text-[10px] font-bold uppercase tracking-[0.2em] px-6 transition-all duration-300 hover:bg-ink hover:text-white dark:hover:bg-white dark:hover:text-ink flex items-center justify-center gap-2 rounded-full">
+                    <span class="material-symbols-outlined text-base">bookmark</span> Save Reading
+                </button>
+                <button id="btn-clarify"
+                    class="w-full sm:w-auto min-w-[180px] h-12 bg-ink dark:bg-white text-white dark:text-ink border border-ink dark:border-white text-[10px] px-6 font-bold uppercase tracking-[0.2em] transition-all duration-300 hover:opacity-90 flex items-center justify-center gap-2 shadow-xl shadow-ink/10 dark:shadow-white/10 rounded-full group">
+                    <span class="material-symbols-outlined text-base group-hover:animate-pulse">psychology_alt</span>
+                    Clarify
+                </button>
+            </div>
+        </section>
+
+        <!-- Chat Section -->
+        <section id="chat-section" class="w-full max-w-3xl mt-12 chat-container">
+            <div class="border-t border-ink/10 dark:border-white/10 pt-8 flex flex-col items-center">
+                <h3 class="font-serif text-xl italic mb-6">Seek Deeper Wisdom</h3>
+                <div id="chat-history" class="w-full flex flex-col gap-4 mb-6 max-h-[400px] overflow-y-auto px-2">
+                    <!-- Chat messages injected here -->
+                </div>
+                <div class="w-full relative">
+                    <input type="text" id="chat-input" placeholder="Ask a clarifying question..."
+                        class="w-full bg-transparent border-b border-ink/30 dark:border-white/30 py-3 pr-12 focus:outline-none focus:border-ink dark:focus:border-white transition-colors text-lg" />
+                    <button id="btn-send-chat"
+                        class="absolute right-0 bottom-3 text-ink/50 dark:text-white/50 hover:text-ink dark:hover:text-white transition-colors">
+                        <span class="material-symbols-outlined">send</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer
+        class="zen-footer flex items-center justify-center py-6 border-t border-ink/10 dark:border-white/10 text-xs tracking-widest uppercase opacity-70 gap-6 mt-12">
+        <span>Past</span><span>Present</span><span>Future</span>
+    </footer>
+
+    <!-- Logic -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+        const API_BASE = "http://127.0.0.1:8000/api/runes";
+        let spreadContext = null;
+        let chatHistory = [];
+
+        const $loading = document.getElementById("loading");
+        const $cardContainer = document.getElementById("card-container");
+        const $interpretationText = document.getElementById("interpretation-text");
+        const $interpretationSection = document.getElementById("interpretation-section");
+        const $controlsSection = document.getElementById("controls-section");
+        const $chatSection = document.getElementById("chat-section");
+        const $btnClarify = document.getElementById("btn-clarify");
+        const $chatInput = document.getElementById("chat-input");
+        const $btnSendChat = document.getElementById("btn-send-chat");
+        const $chatHistoryBox = document.getElementById("chat-history");
+
+        // Helper to convert Markdown to HTML
+        function renderMarkdown(md) {
+            return marked.parse(md);
+        }
+
+        async function initReading() {
+            try {
+                // 1. Draw Runes
+                const drawRes = await fetch(`${API_BASE}/draw`);
+                if (!drawRes.ok) throw new Error("Failed to draw runes");
+                const spread = await drawRes.json();
+                spreadContext = spread;
+
+                // Render Runes UI
+                renderCards(spread.past_rune, spread.present_rune, spread.future_rune);
+
+                // 2. Interpret Spread
+                const intRes = await fetch(`${API_BASE}/interpret`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        past_rune: spread.past_rune,
+                        present_rune: spread.present_rune,
+                        future_rune: spread.future_rune,
+                        userContext: "I seek general philosophical guidance."
+                    })
+                });
+                if (!intRes.ok) throw new Error("Failed to interpret cells");
+                const intData = await intRes.json();
+
+                // Set interpretation
+                $interpretationText.innerHTML = renderMarkdown(intData.text);
+
+                // Add first AI message to chat history automatically
+                chatHistory.push({ role: "model", parts: [{ text: intData.text }] });
+
+                // Hide loading, show sections
+                $loading.classList.add("opacity-0", "pointer-events-none");
+                setTimeout(() => { $loading.style.display = 'none'; }, 500);
+
+                $interpretationSection.classList.remove("hidden");
+                $controlsSection.classList.remove("hidden");
+
+            } catch (error) {
+                console.error(error);
+                $loading.innerHTML = `<p class="font-serif italic text-red-500">The connection was disturbed. Refresh to cast again.</p>`;
+            }
+        }
+
+        function createCardHtml(rune, position, delay, verticalOffset) {
+            return `
+                <div class="flex flex-col items-center gap-6 animate-fade-in" style="animation-delay: ${delay}ms; translate: 0 ${verticalOffset}px;">
+                    <div class="relative w-full aspect-[3/4] max-w-[200px] bg-paper dark:bg-zinc-900 border-2 border-ink/20 dark:border-white/20 p-2 sm:p-4 rounded-[40px] shadow-xl hover:-translate-y-2 transition-transform duration-500 flex flex-col items-center justify-center text-center">
+                        <span class="font-serif text-5xl mb-2 text-ink dark:text-white">${rune.symbol}</span>
+                        <h3 class="font-serif text-lg sm:text-xl font-bold tracking-wider">${rune.name}</h3>
+                    </div>
+                    <span class="text-xs font-bold uppercase tracking-widest text-ink/40 dark:text-white/40">
+                        ${position}
+                    </span>
+                </div>
+            `;
+        }
+
+        function renderCards(past, present, future) {
+            $cardContainer.innerHTML =
+                createCardHtml(past, "I. Past", 0, 0) +
+                createCardHtml(present, "II. Present", 200, 20) +
+                createCardHtml(future, "III. Future", 400, 0);
+        }
+
+        // Toggle Chat
+        $btnClarify.addEventListener("click", () => {
+            $chatSection.style.display = "block";
+            $chatInput.focus();
+            $chatSection.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // Chat logic
+        async function sendChat() {
+            const text = $chatInput.value.trim();
+            if (!text) return;
+
+            // Render User Message
+            addChatMessageHtml("user", text);
+            $chatInput.value = "";
+            $chatInput.disabled = true;
+
+            // Update History
+            chatHistory.push({ role: "user", parts: [{ text }] });
+
+            // Fetch AI answer
+            try {
+                const chatRes = await fetch(`${API_BASE}/chat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ history: chatHistory })
+                });
+                if (!chatRes.ok) throw new Error("Chat error");
+                const resData = await chatRes.json();
+
+                const replyText = resData.text;
+                chatHistory.push({ role: "model", parts: [{ text: replyText }] });
+                addChatMessageHtml("model", replyText);
+
+            } catch (err) {
+                console.error(err);
+                addChatMessageHtml("model", "*(Silence)* Something disturbed the flow.");
+            } finally {
+                $chatInput.disabled = false;
+                $chatInput.focus();
+            }
+        }
+
+        function addChatMessageHtml(role, text) {
+            const el = document.createElement("div");
+            el.className = `chat-message ${role} p-4 rounded-xl border border-ink/5 dark:border-white/5 opacity-0 transition-opacity duration-300`;
+            el.innerHTML = renderMarkdown(text);
+            $chatHistoryBox.appendChild(el);
+
+            // tiny reflow delay to trigger transition
+            requestAnimationFrame(() => { el.style.opacity = 1; });
+            $chatHistoryBox.scrollTop = $chatHistoryBox.scrollHeight;
+        }
+
+        $btnSendChat.addEventListener("click", sendChat);
+        $chatInput.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") sendChat();
+        });
+
+        // Add custom fade-in animation
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+            .animate-fade-in { opacity: 0; animation: fadeIn 1s forwards ease-out; }
+        `;
+        document.head.appendChild(style);
+
+        // Start
+        window.addEventListener("DOMContentLoaded", initReading);
+    </script>
+</body>
+
+</html>

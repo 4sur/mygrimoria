@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Zen AI Oracle</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Noto+Serif+JP:wght@300;400;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link href="../unified.css" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "ink": "#1a1a1a",
+                        "paper": "#fcfcfc",
+                    },
+                    fontFamily: {
+                        "sans": ["Inter", "sans-serif"],
+                        "serif": ["Noto Serif JP", "serif"],
+                    },
+                },
+            },
+        }
+    </script>
+</head>
+
+<body
+    class="bg-white dark:bg-ink text-ink dark:text-paper min-h-screen flex flex-col font-sans antialiased overflow-x-hidden transition-colors duration-300">
+    <!-- Header: matches App.tsx header -->
+    <header class="zen-header">
+        <div class="zen-logo">
+            <div class="zen-logo-icon">
+                <span class="material-symbols-outlined" style="font-size:1.25rem">all_inclusive</span>
+            </div>
+            <h1 class="zen-logo-title">ZEN I CHING</h1>
+        </div>
+        <div class="hidden md:flex items-center gap-8">
+            <span class="font-serif italic text-lg text-ink/60 dark:text-white/60">Reading Session</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <button class="zen-btn-icon" title="History">
+                <span class="material-symbols-outlined" style="font-size:1.25rem">history</span>
+            </button>
+            <button class="zen-btn-ghost">Close Session</button>
+        </div>
+    </header>
+    <!-- Main Content Area -->
+    <main class="flex-grow flex flex-col items-center justify-center pt-24 pb-12 px-6 w-full max-w-[1440px] mx-auto">
+        <!-- The Spread -->
+        <section class="w-full max-w-5xl mb-16">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-16 items-center justify-center">
+                <!-- Card 1 -->
+                <div class="group flex flex-col items-center gap-6 cursor-pointer">
+                    <div
+                        class="relative w-full aspect-[2/3] max-w-[280px] bg-paper dark:bg-zinc-900 border border-ink/10 dark:border-white/10 p-4 transition-transform duration-700 ease-out group-hover:-translate-y-2 rounded-xl">
+                        <div class="w-full h-full border border-ink/5 dark:border-white/5 flex items-center justify-center bg-white dark:bg-black bg-opacity-50 grayscale contrast-110"
+                            style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCc3RQePzsUhegBJQq7lScP0e-egb02QPXWMavv2hbp9llqPjpCC9JMHz3-cwj604kFf7PoSieRYF8Rcx7cHUQ9pzyOR9VmMVexmA0ppXT-9bgI36nawFSyT8ZO2X4z03tcvEwoblOhp-yJrROt_wHUPVQ0QLjXsfUBhgFekSbcHSiqYoFXhQaeDEMCo2XTuwnyvuv54zTJVes482F9cp-GunCEqzOGC9OJmodVxLXcj2IRF4vVl5KRWYRNf8D9mpJH-D6UCktYmVQ'); background-size: cover;">
+                        </div>
+                    </div>
+                    <span
+                        class="text-xs font-bold uppercase tracking-widest text-ink/40 dark:text-white/40 group-hover:text-ink dark:group-hover:text-white transition-colors">I.
+                        Past</span>
+                </div>
+                <!-- Card 2 (Active/Central) -->
+                <div class="group flex flex-col items-center gap-6 cursor-pointer">
+                    <div
+                        class="relative w-full aspect-[2/3] max-w-[300px] bg-white dark:bg-black border border-ink dark:border-white p-5 transition-transform duration-700 ease-out -translate-y-4 rounded-xl shadow-2xl shadow-ink/5 dark:shadow-white/5">
+                        <div class="w-full h-full border border-ink/20 dark:border-white/20 flex items-center justify-center bg-paper dark:bg-zinc-900/20 grayscale contrast-110"
+                            style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCXSQQqQ5uUGnXPW11B1F1BYV3vEwGq6p--UNYnaoUeOvv6TlI5_KxHYPTIJpKtKeOF1-ph-w_a_GuXVzqMfAkMpGd7yPZ37oEaAGlvPi3yLne7B0WW6IwUVemSZ4arXuDFFEqp7ehlb0wurLlPRWaBxqbpSuFZoJAub58DXoeFRCdmPg-7qhft1N6uyAbPRSyFBHcWiBa3Ox7hKCxVGb-5lMKlp-YQfwxmJ_d-QRU4RGr8qcaple4pmmFDn3V2HJzQrdVm28aDNBo'); background-size: cover;">
+                        </div>
+                    </div>
+                    <span class="text-xs font-bold uppercase tracking-widest text-ink dark:text-white">II.
+                        Present</span>
+                </div>
+                <!-- Card 3 -->
+                <div class="group flex flex-col items-center gap-6 cursor-pointer">
+                    <div
+                        class="relative w-full aspect-[2/3] max-w-[280px] bg-paper dark:bg-zinc-900 border border-ink/10 dark:border-white/10 p-4 transition-transform duration-700 ease-out group-hover:-translate-y-2 rounded-xl">
+                        <div class="w-full h-full border border-ink/5 dark:border-white/5 flex items-center justify-center bg-white dark:bg-black bg-opacity-50 grayscale contrast-110"
+                            style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCvr-NQenVJkWyp-1zJDMynBV5cJQMgmeHWMr9BdIqNx2mhUtxk7zXXVfEXcBYhVBvG5qcsrKiNKLMboUFPqAY38MiGSK9-_8U4B96UwN4bMY3aXS0ityrSXY_TkGU3pV4-muqplG8ZizhIeocJtAGyFyINexVw4iyOIf9R-B5ztZKiUxMSXJr0zXKyFvY6H2qedDP6l_pAR8kWHqcgX-2g3w_FVjUrrihr_m5iq4qum4q0KWA6NJ4eDIASCPU1zAFIhSI0VHEUZyU'); background-size: cover;">
+                        </div>
+                    </div>
+                    <span
+                        class="text-xs font-bold uppercase tracking-widest text-ink/40 dark:text-white/40 group-hover:text-ink dark:group-hover:text-white transition-colors">III.
+                        Future</span>
+                </div>
+            </div>
+        </section>
+        <!-- AI Insight -->
+        <section class="w-full max-w-[650px] relative mt-8 mb-16">
+            <div
+                class="border border-ink/10 dark:border-white/10 p-10 md:p-14 bg-paper/50 dark:bg-black/50 backdrop-blur-sm relative rounded-xl">
+                <span
+                    class="absolute top-4 left-4 material-symbols-outlined text-ink/10 dark:text-white/10 text-4xl">format_quote</span>
+                <h2
+                    class="font-serif text-2xl md:text-3xl text-center mb-8 leading-snug text-ink dark:text-white font-light">
+                    The Silent Observer
+                </h2>
+                <div class="space-y-6">
+                    <p
+                        class="font-serif text-lg md:text-xl leading-relaxed text-ink/80 dark:text-white/80 text-justify">
+                        The cards suggest a moment of profound pause. In the stillness, clarity emerges not from
+                        seeking, but
+                        from allowing. The obstacle you perceive is merely a reflection of your own hesitation to let go
+                        of
+                        control.
+                    </p>
+                    <p
+                        class="font-serif text-lg md:text-xl leading-relaxed text-ink/80 dark:text-white/80 text-justify">
+                        Embrace the void between thoughts. It is not empty, but full of potential waiting to take form.
+                    </p>
+                </div>
+                <div class="mt-10 flex justify-center items-center gap-2 opacity-60">
+                    <span class="h-px w-8 bg-ink/30 dark:bg-white/30"></span>
+                    <span class="material-symbols-outlined text-sm">spa</span>
+                    <span class="h-px w-8 bg-ink/30 dark:bg-white/30"></span>
+                </div>
+            </div>
+        </section>
+        <!-- User Controls -->
+        <section class="w-full max-w-2xl px-4">
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center w-full">
+                <button
+                    class="w-full sm:w-auto min-w-[180px] h-12 border border-ink/10 dark:border-white/10 hover:border-ink dark:hover:border-white bg-transparent text-ink dark:text-white text-[10px] font-bold uppercase tracking-[0.2em] transition-all duration-300 hover:bg-ink hover:text-white dark:hover:bg-white dark:hover:text-ink flex items-center justify-center gap-2 group rounded-full">
+                    <span
+                        class="material-symbols-outlined text-base group-hover:scale-110 transition-transform">bookmark</span>
+                    Save Reading
+                </button>
+                <button
+                    class="w-full sm:w-auto min-w-[180px] h-12 bg-ink dark:bg-white text-white dark:text-ink border border-ink dark:border-white text-[10px] font-bold uppercase tracking-[0.2em] transition-all duration-300 hover:opacity-90 flex items-center justify-center gap-2 shadow-xl shadow-ink/10 dark:shadow-white/10 group rounded-full">
+                    <span class="material-symbols-outlined text-base group-hover:animate-pulse">psychology_alt</span>
+                    Clarify
+                </button>
+                <button
+                    class="w-full sm:w-auto min-w-[180px] h-12 border border-ink/10 dark:border-white/10 hover:border-ink dark:hover:border-white bg-transparent text-ink dark:text-white text-[10px] font-bold uppercase tracking-[0.2em] transition-all duration-300 hover:bg-ink hover:text-white dark:hover:bg-white dark:hover:text-ink flex items-center justify-center gap-2 group rounded-full">
+                    <span
+                        class="material-symbols-outlined text-base group-hover:scale-110 transition-transform">share</span>
+                    Share Wisdom
+                </button>
+            </div>
+        </section>
+    </main>
+    <!-- Footer: matches App.tsx -->
+    <footer class="zen-footer">
+        <div class="zen-footer-inner">
+            <span>Heaven</span><span>Earth</span><span>Water</span><span>Fire</span>
+        </div>
+    </footer>
+</body>
+
+</html>
