@@ -9,7 +9,6 @@ import IntentionPage from './pages/Oracle/IntentionPage';
 import TarotPage from './pages/Tarot';
 import RunesPage from './pages/Runes';
 import LoginPage from './pages/Login/LoginPage';
-import GrimorioPage from './pages/Grimorio/GrimorioPage';
 import SanctumPage from './pages/Sanctum/SanctumPage';
 import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute } from './components/Auth/ProtectedRoute';
@@ -37,14 +36,6 @@ export default function App() {
               <Route path="runes" element={<RunesPage />} />
             </Route>
             <Route path="login" element={<LoginPage />} />
-            <Route
-              path="grimorio"
-              element={
-                <ProtectedRoute>
-                  <GrimorioPage />
-                </ProtectedRoute>
-              }
-            />
             <Route
               path="sanctum"
               element={

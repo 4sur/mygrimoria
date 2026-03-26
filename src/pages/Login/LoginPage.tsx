@@ -65,7 +65,7 @@ const LoginPage: React.FC = () => {
                             <LogIn className="text-white dark:text-ink" size={32} />
                         </motion.div>
                         <h2 className="text-3xl font-serif font-bold text-ink dark:text-white mb-2">Welcome, Seeker</h2>
-                        <p className="text-ink/60 dark:text-white/60">Enter the path to your Digital Grimorio</p>
+                        <p className="text-ink/60 dark:text-white/60">Enter the path to your Digital Sanctum</p>
                     </div>
 
                     {error && (

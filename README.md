@@ -13,7 +13,7 @@ MyGrimoria is a web application that provides mystical divination experiences th
 - **Tarot** — The classic 78-card deck with three-card spreads
 - **Runes** — The ancient Futhark alphabet oracle
 
-The app features user authentication, personal grimorio (spellbook), and AI-powered interpretations.
+The app features user authentication, personal sanctum (spellbook), and AI-powered interpretations.
 
 ---
 
@@ -96,7 +96,7 @@ mygrimoria/
 │   │   ├── Tarot/           # Tarot card oracle
 │   │   ├── Runes/           # Rune oracle
 │   │   ├── Oracle/          # Intention setting
-│   │   ├── Grimorio/        # User's personal spellbook
+│   │   ├── Sanctum/           # User's personal spellbook
 │   │   ├── Sanctum/         # User profile/settings
 │   │   └── Login/           # Authentication
 │   ├── hooks/               # Custom React hooks
@@ -123,7 +123,7 @@ mygrimoria/
 - **Oracle Readings**: Get divinations from I Ching, Tarot, or Runes
 - **AI Interpretation**: Receive AI-powered explanations via DeepSeek
 - **User Accounts**: Sign up and login with Supabase Auth
-- **Grimorio**: Save and revisit your readings
+- **Sanctum**: Save and revisit your readings
 - **Sanctum**: Manage your profile and settings
 - **Blog**: Read mystical content via WordPress integration
 
@@ -171,7 +171,7 @@ mygrimoria/
 | User authentication | ✅ Complete | Supabase Auth |
 | User profile (Sanctum) | ✅ Complete | /api/me endpoint |
 | Blog integration | ✅ Partial | wpService exists but not fully connected |
-| Grimorio (saved readings) | ⚠️ Partial | Data saved but no dedicated UI |
+| Sanctum (saved readings) | ⚠️ Partial | Data saved but no dedicated UI |
 
 ### 🎨 Design Review - Technical Architecture
 
@@ -215,7 +215,7 @@ mygrimoria/
 3. **Duplicated page logic** - Iching/Tarot/Runes pages should share a base component
 4. **No loading states on initial load** - App crashes if Supabase unavailable
 5. **Blog not connected** - wpService.ts exists but not wired to UI
-6. **Grimorio UI missing** - Data saved, but no dedicated page to browse past readings
+5. **Sanctum UI missing** - Data saved, but no dedicated page to browse past readings
 7. **No error boundaries** - React errors can crash entire app
 
 ---
@@ -224,7 +224,7 @@ mygrimoria/
 
 ### High Priority
 1. **Add error boundaries** - Wrap pages in ErrorBoundary components
-2. **Connect Grimorio page** - Create UI to browse /api/history
+2. **Connect Sanctum page** - Create UI to browse /api/history
 3. **Fix hardcoded API URLs** - Move to environment variables
 
 ### Medium Priority
@@ -248,7 +248,7 @@ See [ROADMAP.md](./ROADMAP.md) for detailed planning.
 - Verify backend works with DeepSeek
 - Clean up obsolete references
 
-### Phase 2 — Grimorio UI
+### Phase 2 — Sanctum UI
 - Create UI to browse `/api/history`
 - Filter by oracle (I Ching/Tarot/Runas)
 - Show saved interpretation + chat history

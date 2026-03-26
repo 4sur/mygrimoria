@@ -13,7 +13,7 @@ Mystical oracle application providing I Ching, Tarot, and Runes divination with 
 | Frontend | React 19 + TypeScript + Vite + TailwindCSS 4 |
 | Backend | Python FastAPI + Supabase |
 | Auth | Supabase Auth |
-| AI | Gemini API |
+| AI | DeepSeek (OpenAI-compatible API) |
 
 ---
 
@@ -21,11 +21,11 @@ Mystical oracle application providing I Ching, Tarot, and Runes divination with 
 
 ### Frontend
 ```bash
-npm run dev          # Dev server (port 3000)
+npm run dev          # Dev server (port 3000, host 0.0.0.0)
 npm run build        # Production build
-npm run preview      # Preview build
-npm run lint         # TypeScript check
-npm run clean        # Remove dist
+npm run preview      # Preview production build
+npm run lint         # TypeScript type-check (tsc --noEmit)
+npm run clean        # Remove dist/
 ```
 
 ### Backend
@@ -34,6 +34,36 @@ cd backend
 pip install -r requirements.txt
 python main.py       # or: uvicorn main:app --reload --port 8000
 ```
+
+---
+
+## Environment Variables
+
+### Frontend (`VITE_*` — exposed to browser)
+```env
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key
+VITE_API_URL=http://localhost:8000
+VITE_WP_GRAPHQL_URL=https://yourdomain.com/graphql
+```
+
+### Backend (server-side only)
+```env
+PORT=8000
+ALLOWED_ORIGINS=http://localhost:3000,http://localhost:5173,https://yourdomain.com
+
+# AI Provider (DeepSeek — OpenAI-compatible)
+DEEPSEEK_API_KEY=your-deepseek-api-key
+
+# Supabase
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+SUPABASE_JWT_SECRET=your-jwt-secret
+DATABASE_URL=postgresql://postgres:password@db.your-project.supabase.co:5432/postgres
+```
+
+> **Never commit real secrets.** Copy `.env.example` → `.env` and fill in values locally.
 
 ---
 
@@ -99,8 +129,8 @@ RICE = (Reach × Impact × Confidence) / Effort
 
 **Output:**
 - Session documented with Q&A
-- Assumptions marked as `assumptions`
-- Gaps marked as `[human-required]`
+- Assumptions marked as `[assumption]`
+- Gaps requiring human input marked as `[human-required]`
 
 ---
 
@@ -111,7 +141,7 @@ RICE = (Reach × Impact × Confidence) / Effort
 
 **Responsibilities:**
 - Extract FR (Functional Requirements) and NFR (Non-Functional)
-- Identify actors, use cases, acceptance criteria
+- Identify actors, use cases, acceptance criteria (Given/When/Then)
 - Flag ambiguities
 - Define scope boundary
 
@@ -129,7 +159,7 @@ RICE = (Reach × Impact × Confidence) / Effort
 **Output:** `/docs/architecture/<feature>.design.md`
 
 **Responsibilities:**
-- Define API endpoints
+- Define API endpoints and request/response schemas
 - Define frontend component tree
 - Define TypeScript interfaces
 - Define DB schema and migrations
@@ -160,7 +190,7 @@ RICE = (Reach × Impact × Confidence) / Effort
 **Constraints:**
 - Do not invent requirements
 - Do not introduce dependencies without ADR
-- Follow project conventions
+- Follow project conventions (see Code Style Guidelines below)
 
 **States:** `not-started` → `in-progress` → `pr-opened` → `done`
 
@@ -174,10 +204,10 @@ RICE = (Reach × Impact × Confidence) / Effort
 **Checklist:**
 - [ ] Code follows spec and design
 - [ ] Tests pass
-- [ ] Lint passes
+- [ ] Lint passes (`npm run lint` / `mypy`)
 - [ ] No breaking changes without ADR
 - [ ] Tracking instrumentation present
-- [ ] Environment variables documented
+- [ ] Environment variables documented in `.env.example`
 
 **Decisions:**
 | Decision | Action |
@@ -196,8 +226,8 @@ RICE = (Reach × Impact × Confidence) / Effort
 
 **Event Model:**
 ```typescript
-// <entity>_<past_verb>
-feature_created, export_completed, search_performed
+// Naming: <entity>_<past_verb>
+// Examples: reading_created, export_completed, session_started
 
 // Base schema
 {
@@ -215,7 +245,7 @@ feature_created, export_completed, search_performed
 
 **Copy Agent:**
 - Input: UI spec + spec + domain glossary
-- Output: UI strings inventory
+- Output: UI strings inventory in `/content/copy/`
 
 **Release Agent:**
 - Input: Changelog + merged specs
@@ -228,8 +258,8 @@ feature_created, export_completed, search_performed
 **Principles:**
 - No inventing — all content traceable to SDD artifacts
 - Clear before clever
-- Subject is the user
-- No filler
+- Subject is the user, not the product
+- No filler words
 
 ---
 
@@ -238,7 +268,7 @@ feature_created, export_completed, search_performed
 ## TypeScript
 
 ### Imports
-- Use `@/` alias (configured in tsconfig.json)
+- Use `@/` alias (configured in `tsconfig.json`)
 - Group: external first, then internal
 - Use `import { type X }` for type-only imports
 
@@ -253,8 +283,8 @@ import type { Reading } from '@/types';
 ### Naming
 - Components: PascalCase (`HexagramDetail`, `LoginPage`)
 - Hooks: `use` prefix (`useOracle`, `useOracleSession`)
-- Types: PascalCase (`Reading`, `TarotReading`)
-- Files: kebab-case components, camelCase utilities
+- Types/Interfaces: PascalCase (`Reading`, `TarotReading`)
+- Files: kebab-case for components, camelCase for utilities
 
 ### React Patterns
 ```typescript
@@ -265,16 +295,16 @@ interface Props {
 
 export function HexagramDetail({ title, onComplete }: Props) {
   const [loading, setLoading] = useState(false);
-  
+
   useEffect(() => {
     // effect logic
   }, []);
-  
+
   return <div className="hexagram-detail">{/* JSX */}</div>;
 }
 ```
 
-## Error Handling
+### Error Handling
 ```typescript
 try {
   const { data, error } = await supabase.from('readings').select('*');
@@ -288,54 +318,107 @@ try {
 
 ---
 
+## Python (Backend)
+
+### Style
+- Follow PEP 8
+- Type hints on all function signatures
+- Docstrings for public functions and classes
+
+### FastAPI Patterns
+```python
+from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel
+
+router = APIRouter(prefix="/readings", tags=["readings"])
+
+class ReadingRequest(BaseModel):
+    oracle_type: str
+    seed: int | None = None
+
+@router.post("/", response_model=ReadingResponse)
+async def create_reading(
+    body: ReadingRequest,
+    current_user: dict = Depends(get_current_user),
+) -> ReadingResponse:
+    """Create a new oracle reading for the authenticated user."""
+    ...
+```
+
+### Error Handling
+```python
+from fastapi import HTTPException
+
+# Raise typed HTTP errors — never return raw exceptions
+raise HTTPException(status_code=404, detail="Reading not found")
+```
+
+---
+
 ## Project Structure
 
 ```
 mygrimoria/
 ├── src/
 │   ├── App.tsx              # Routes
-│   ├── main.tsx             # Entry
-│   ├── index.css            # Tailwind
-│   ├── components/         # UI components
-│   │   ├── Auth/           # Auth (ProtectedRoute)
-│   │   └── Layout/         # Layout (Header, Footer, Layout)
-│   ├── pages/              # Route pages
+│   ├── main.tsx             # App entry point
+│   ├── index.css            # Tailwind base styles
+│   ├── vite-env.d.ts        # Vite type declarations
+│   ├── assets/              # Static assets (images, fonts)
+│   ├── components/          # Shared UI components
+│   │   ├── Auth/            # ProtectedRoute
+│   │   ├── Layout/          # Header, Footer, Layout wrapper
+│   │   ├── HexagramDetail.tsx
+│   │   ├── HexagramDisplay.tsx
+│   │   ├── HexagramLine.tsx
+│   │   ├── RuneDetail.tsx
+│   │   ├── TarotDetail.tsx
+│   │   ├── LoadingOracle.tsx
+│   │   └── Typewriter.tsx
+│   ├── pages/               # Route-level pages
 │   │   ├── Home/
 │   │   ├── Blog/
 │   │   ├── Iching/
 │   │   ├── Tarot/
 │   │   ├── Runes/
 │   │   ├── Oracle/
-│   │   ├── Grimorio/
-│   │   ├── Sanctum/
+│   │   ├── Sanctum/         # User's spellbook & profile
 │   │   └── Login/
-│   ├── hooks/              # Custom hooks (useOracle, useOracleSession)
-│   ├── context/            # Context (Auth, Theme)
-│   ├── services/           # API (api.ts, wpService.ts)
-│   ├── lib/                # Utils (supabase.ts)
-│   ├── constants/          # Oracle data (tarot, runes, iching)
-│   └── types/              # TypeScript types
+│   ├── hooks/               # useOracle, useOracleSession
+│   ├── context/             # AuthContext, ThemeContext
+│   ├── services/            # api.ts (FastAPI), wpService.ts (WordPress)
+│   ├── lib/                 # supabase.ts client
+│   ├── constants/           # Oracle data (tarot, runes, iching)
+│   └── types/               # Global TypeScript types
 ├── backend/
-│   ├── main.py             # FastAPI entry
-│   ├── auth.py             # Auth logic
-│   ├── models.py           # DB models
-│   ├── database.py         # DB connection
-│   ├── constants/          # Backend data
-│   └── alembic/            # Migrations
-├── stitch/                 # Design prototypes
-└── AGENTS.md              # This file
+│   ├── main.py              # FastAPI app + routes
+│   ├── auth.py              # JWT / Supabase auth logic
+│   ├── models.py            # Pydantic + DB models
+│   ├── database.py          # DB connection (Supabase)
+│   ├── constants/           # Backend oracle data
+│   └── alembic/             # DB migrations
+├── specs/                   # Feature specifications (SDD)
+│   └── <domain>/<feature>.spec.md
+├── docs/
+│   └── architecture/        # Feature design docs (SDD)
+│       └── <feature>.design.md
+├── stitch/                  # UI design prototypes / mockups
+├── .env.example             # Required env variables template
+├── AGENTS.md                # This file
+├── SKILLS.md                # Executable agent skills
+└── ROADMAP.md               # Project roadmap
 ```
 
 ---
 
 ## Development Workflow (SDD)
 
-1. **Intake**: PM validates and prioritizes request
-2. **Socratic**: Clarify requirements, identify assumptions
-3. **Spec**: Write feature specification
-4. **Design**: Technical architecture
-5. **Dev**: Implement code
-6. **Review**: Validate against spec
+1. **Intake**: PM validates and prioritizes request via RICE score
+2. **Socratic**: Clarify requirements, surface assumptions
+3. **Spec**: Write feature specification → `/specs/<domain>/<feature>.spec.md`
+4. **Design**: Define technical architecture → `/docs/architecture/<feature>.design.md`
+5. **Dev**: Implement code following design doc
+6. **Review**: Validate against spec + design checklist
 7. **Merge**: Deploy to production
 
 ---
@@ -347,13 +430,4 @@ mygrimoria/
 3. Implement in `/src/pages/` (frontend) or `/backend/` (backend)
 4. Add route in `App.tsx`
 5. Use `ProtectedRoute` for auth-required pages
-
----
-
-## Environment Variables
-
-```env
-VITE_SUPABASE_URL=your_supabase_url
-VITE_SUPABASE_ANON_KEY=your_anon_key
-DEEPSEEK_API_KEY=your_deepseek_key
-```
+6. Document new env variables in `.env.example`

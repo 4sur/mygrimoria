@@ -1,25 +1,26 @@
 # SKILLS.md — MyGrimoria
 
-> Executable skills for LLM agents. Reference each skill by its section.
+> Executable skills for LLM agents. Reference each skill by its section header.
 
 ---
 
 ## Index
 
-| Skill | Section |
-|-------|---------|
-| rice-scoring | PM |
-| backlog-management | PM |
-| socratic-question | Socratic |
-| spec-writing | Design |
-| design-doc | Design |
-| code-implementation | Dev |
-| code-review | Review |
-| event-schema | Data |
-| tracking-plan | Data |
-| voice-and-tone | Marketing |
-| ui-copy | Marketing |
-| release-notes | Marketing |
+| Skill | Agent | Phase |
+|-------|-------|-------|
+| [rice-scoring](#rice-scoring) | PM | Intake |
+| [backlog-management](#backlog-management) | PM | Intake |
+| [socratic-question](#socratic-question) | Socratic | Pre-spec / Pre-design |
+| [spec-writing](#spec-writing) | Spec | Spec |
+| [design-doc](#design-doc) | Design | Design |
+| [frontend-implementation](#frontend-implementation) | Dev | Dev |
+| [backend-implementation](#backend-implementation) | Dev | Dev |
+| [code-review](#code-review) | Review | Review |
+| [event-schema](#event-schema) | Data | Post-merge |
+| [tracking-plan](#tracking-plan) | Data | Post-merge |
+| [voice-and-tone](#voice-and-tone) | Marketing | Post-merge |
+| [ui-copy](#ui-copy) | Marketing | Post-merge |
+| [release-notes](#release-notes) | Marketing | Post-merge |
 
 ---
 
@@ -27,32 +28,49 @@
 
 ### rice-scoring
 
-**Input:** requirement, okrs_current, analytics_data
+**Trigger:** New feature request arrives (via user message or backlog review)
+
+**Input:**
+- `requirement` (string, required): Feature description
+- `okrs_current` (string, optional): Current OKRs for alignment check
+- `analytics_data` (string, optional): Usage data for Reach estimation
 
 **Steps:**
-1. Estimate Reach (unique users per quarter)
-2. Estimate Impact (0.25/0.5/1/2/3)
-3. Estimate Confidence (100/80/50%)
+1. Estimate Reach (unique users affected per quarter)
+2. Estimate Impact (0.25 / 0.5 / 1 / 2 / 3)
+3. Estimate Confidence (100% / 80% / 50%)
 4. Estimate Effort (person-weeks)
-5. Calculate RICE = (Reach × Impact × Confidence) / Effort
-6. Compare with top-5 backlog
+5. Calculate: `RICE = (Reach × Impact × Confidence) / Effort`
+6. Compare score with top-5 backlog items
+7. Emit decision: `APPROVED` / `DEFERRED` / `REJECTED` with justification
 
-**Output:** Backlog entry with score and decision
+**Output:** Backlog entry with RICE score and decision
+
+**On failure:**
+- If Reach or Impact cannot be estimated → mark as `[assumption]` and proceed with conservative values
+- If RICE score ties with existing backlog item → escalate to PM for manual priority
 
 ---
 
 ### backlog-management
 
-**Input:** event_type (new_request|analytics_report|periodic_review)
+**Trigger:** `event_type` = `new_request` | `analytics_report` | `periodic_review`
+
+**Input:**
+- `event_type` (enum, required): Type of trigger event
 
 **Steps:**
-1. Classify request
-2. Execute RICE scoring
-3. Detect duplicates
-4. Reorder backlog
-5. Archive rejected > 90 days
+1. Classify request (feature / bug / chore / spike)
+2. Execute `rice-scoring` skill
+3. Detect duplicates against existing backlog
+4. Reorder backlog by RICE score descending
+5. Archive rejected items older than 90 days
 
-**Output:** backlog.md updated
+**Output:** `backlog.md` updated
+
+**On failure:**
+- Duplicate detected → link to existing item, do not create new entry
+- RICE inputs missing → invoke `socratic-question` before scoring
 
 ---
 
@@ -60,68 +78,135 @@
 
 ### socratic-question
 
-**Input:** requirement_text, current_context
+**Trigger:** Requirement ambiguity detected, or invoked manually by any agent
+
+**Input:**
+- `requirement_text` (string, required): The requirement or assumption under review
+- `current_context` (string, optional): Relevant existing specs or design docs
 
 **Steps:**
-1. Identify hidden assumptions
-2. Formulate deep-level questions
-3. Detect contradictions
-4. Separate facts from assumptions
-5. Max 3 rounds → if no resolution, mark `[human-required]`
+1. Identify hidden assumptions in the requirement
+2. Formulate deep-level questions (not surface-level)
+3. Detect internal contradictions and name them explicitly
+4. Separate established facts from unvalidated assumptions
+5. Run up to 3 rounds of questioning
+6. If no resolution after 3 rounds → mark open items as `[human-required]`
 
-**Output:** Documented session with questions, identified assumptions
+**Output:** Session document with questions, Q&A, and tagged assumptions
+
+**On failure:**
+- Contradiction cannot be resolved → escalate to PM and halt pipeline
+- Human input required → block pipeline, document `[human-required]` items
+
+---
+
+## Spec Skills
+
+### spec-writing
+
+**Trigger:** Feature approved by PM Agent (`APPROVED` decision)
+
+**Input:**
+- `requirement_text` (string, required): Approved feature description
+- `related_specs` (list, optional): Paths to existing spec files for context
+- `domain_glossary` (string, optional): Domain terminology definitions
+
+**Steps:**
+1. Read domain glossary (create one if it doesn't exist under `/specs/<domain>/glossary.md`)
+2. Read related specs to avoid scope overlap
+3. Extract Functional Requirements (FR) and Non-Functional Requirements (NFR)
+4. Define actors and use cases
+5. Map Acceptance Criteria in Given/When/Then format
+6. Identify and document Open Questions (OQ)
+7. Write spec to `/specs/<domain>/<feature>.spec.md` with `status: draft`
+
+**Output:** `/specs/<domain>/<feature>.spec.md` (status: draft)
+
+**On failure:**
+- Scope overlap with existing spec → invoke `socratic-question` to define boundary
+- Missing domain glossary → create stub glossary before proceeding
 
 ---
 
 ## Design Skills
 
-### spec-writing
-
-**Input:** requirement_text, related_specs, domain_glossary
-
-**Steps:**
-1. Read domain glossary
-2. Read related specs
-3. Extract FR, NFR, actors
-4. Map AC (Given/When/Then)
-5. Identify OQ (open questions)
-6. Write spec in `/specs/<domain>/<feature>.spec.md`
-
-**Output:** spec.md (status: draft)
-
----
-
 ### design-doc
 
-**Input:** spec_approved, socratic_session
+**Trigger:** Spec status transitions to `approved`
+
+**Input:**
+- `spec_approved` (string, required): Path to approved spec file
+- `socratic_session` (string, optional): Path to socratic session document
 
 **Steps:**
-1. Define API endpoints
-2. Define request/response schemas
-3. Define DB schema
-4. Define frontend component tree
-5. Identify cross-cutting concerns
-6. Write design.md
+1. Read approved spec fully
+2. Define API endpoints with HTTP method, path, request body, and response schema
+3. Define TypeScript interfaces for all data models
+4. Define frontend component tree (page → sections → atoms)
+5. Define DB schema changes and required migrations
+6. Document cross-cutting concerns: auth guards, error handling, caching, observability
+7. Write design to `/docs/architecture/<feature>.design.md` with `status: ready-for-dev`
 
-**Output:** design.md (status: ready-for-dev)
+**Output:** `/docs/architecture/<feature>.design.md` (status: ready-for-dev)
+
+**On failure:**
+- Spec is ambiguous → return to `socratic-question`, do not guess
+- DB migration conflicts with existing schema → flag as `[human-required]`
 
 ---
 
 ## Dev Skills
 
-### code-implementation
+### frontend-implementation
 
-**Input:** design_doc, spec, openapi_contract
+**Trigger:** Design doc status is `ready-for-dev`, task assigned to frontend
+
+**Input:**
+- `design_doc` (string, required): Path to design doc
+- `spec` (string, required): Path to approved spec
+- `openapi_contract` (string, required): API contract (endpoint definitions)
 
 **Steps:**
-1. Verify design approved
-2. Implement according to contract
-3. Write unit tests
-4. Apply lint
-5. Commit to feature branch
-6. Open PR
+1. Verify design doc status is `ready-for-dev`
+2. Create or update components in `/src/components/` or `/src/pages/`
+3. Wire data via hooks in `/src/hooks/` using the OpenAPI contract
+4. Add route in `App.tsx` if new page; wrap with `ProtectedRoute` if auth-required
+5. Ensure TypeScript compiles clean: `npm run lint`
+6. Commit to feature branch and open PR
 
-**Output:** Code in repo, PR opened
+**Output:** Code in `/src/`, PR opened, lint passes
+
+**On failure:**
+- Design ambiguity → do not guess, open issue against Design Agent
+- New dependency required → document ADR before installing
+- Lint fails → fix TypeScript errors before opening PR
+
+---
+
+### backend-implementation
+
+**Trigger:** Design doc status is `ready-for-dev`, task assigned to backend
+
+**Input:**
+- `design_doc` (string, required): Path to design doc
+- `spec` (string, required): Path to approved spec
+- `openapi_contract` (string, required): API contract
+
+**Steps:**
+1. Verify design doc status is `ready-for-dev`
+2. Define Pydantic models in `backend/models.py`
+3. Implement endpoint(s) in `backend/main.py` following FastAPI patterns
+4. Add auth guard via `Depends(get_current_user)` for protected routes
+5. Write or update DB migration in `backend/alembic/`
+6. Raise typed `HTTPException` for all error cases — never return raw exceptions
+7. Commit to feature branch and open PR
+
+**Output:** Code in `/backend/`, PR opened
+
+**On failure:**
+- Schema conflicts with DB → run alembic diff and resolve before proceeding
+- New dependency required → add to `requirements.txt` and document ADR
+- Missing env variable → add to `.env.example` before merging
 
 ---
 
@@ -129,24 +214,38 @@
 
 ### code-review
 
-**Input:** PR_url, spec, design_doc, contract, test_results, lint_results
+**Trigger:** PR opened against main branch
+
+**Input:**
+- `PR_url` (string, required): Pull request URL
+- `spec` (string, required): Path to spec file
+- `design_doc` (string, required): Path to design doc
+- `contract` (string, required): OpenAPI contract path
+- `test_results` (string, required): CI test output
+- `lint_results` (string, required): CI lint output
 
 **Steps:**
-1. Verify code follows spec and design
-2. Verify tests pass
-3. Verify lint passes
-4. Verify instrumentation present
-5. Emit decision: Approved / Changes required / Breaking change
+1. Verify code implements spec requirements (no more, no less)
+2. Verify code matches design doc (endpoints, component tree, DB schema)
+3. Verify tests pass
+4. Verify lint passes (`npm run lint` / `mypy`)
+5. Verify tracking instrumentation is present for new features
+6. Verify any new env variables are documented in `.env.example`
+7. Emit decision: ✅ Approved / ❌ Changes required / ⚠️ Breaking change
 
-**Output:** Review completed, decision emitted
+**Output:** Review decision with inline comments
 
 **Checklist:**
 - [ ] Code follows spec and design
 - [ ] Tests pass
-- [ ] Lint passes
+- [ ] Lint passes (`npm run lint` / `mypy`)
 - [ ] No breaking changes without ADR
 - [ ] Tracking instrumentation present
-- [ ] Environment variables documented
+- [ ] Environment variables documented in `.env.example`
+
+**On failure:**
+- ❌ Changes required: Dev Agent retries (max 3 attempts)
+- ⚠️ Breaking change: Human gate — do not merge without explicit approval
 
 ---
 
@@ -154,41 +253,56 @@
 
 ### event-schema
 
-**Input:** feature_name, acceptance_criteria
+**Trigger:** New feature merged, analytics instrumentation required
+
+**Input:**
+- `feature_name` (string, required): Name of the shipped feature
+- `acceptance_criteria` (string, required): Accepted ACs from spec
 
 **Steps:**
-1. For each AC, define needed event
-2. Name: `<entity>_<past_verb>`
-3. Define schema with required/optional properties
-4. Create TypeScript/Python typed schemas
+1. For each Acceptance Criterion, identify the event it represents
+2. Name events using `<entity>_<past_verb>` convention
+3. Define schema with required and optional properties
+4. Create TypeScript typed interface in `/src/lib/analytics/`
 
-**Output:** Schemas in `/lib/analytics/`
+**Output:** Typed event schemas in `/src/lib/analytics/`
 
 **Example:**
 ```typescript
-// Event: feature_created
+// Event: reading_created
 {
-  timestamp: number,    // Unix ms
-  session_id: string,   // UUID
-  user_id: string,       // Anonymized
+  timestamp: number,       // Unix ms
+  session_id: string,      // UUID
+  user_id: string,         // Anonymized
   user_role: RoleEnum,
   platform: PlatformEnum,
-  feature_type: string   // Specific to event
+  oracle_type: string      // "iching" | "tarot" | "runes"
 }
 ```
+
+**On failure:**
+- AC does not map cleanly to a single event → split into multiple events or invoke `socratic-question`
 
 ---
 
 ### tracking-plan
 
-**Input:** spec, existing_tracking_plan
+**Trigger:** New event schemas created for a feature
+
+**Input:**
+- `spec` (string, required): Approved spec path
+- `existing_tracking_plan` (string, optional): Current tracking plan for deduplication
 
 **Steps:**
-1. For each event, create tracking plan entry
-2. Verify coverage of all AC
-3. Validate naming conventions
+1. For each event schema, create a tracking plan entry (event name, trigger, properties, owner)
+2. Verify every AC has corresponding coverage in tracking plan
+3. Validate all event names follow `<entity>_<past_verb>` naming convention
+4. Update `tracking-plan.md`
 
-**Output:** tracking-plan.md updated
+**Output:** `tracking-plan.md` updated
+
+**On failure:**
+- AC not covered → add missing event schema before updating plan
 
 ---
 
@@ -196,52 +310,77 @@
 
 ### voice-and-tone
 
-**Input:** text_to_review, context (ui|release|doc|email|social)
+**Trigger:** Any user-facing copy created or modified
+
+**Input:**
+- `text_to_review` (string, required): Copy to validate
+- `context` (enum, required): `ui` | `release` | `doc` | `email` | `social`
 
 **Steps:**
-1. Verify subject = user (not product)
-2. Verify no technicisms without explanation
-3. Verify no filler ("básicamente", "simply")
-4. Verify tone consistent with context
+1. Verify subject is the user, not the product ("You can…" not "The app allows…")
+2. Verify no unexplained technical jargon
+3. Verify no filler words ("básicamente", "simplemente", "just")
+4. Verify tone is consistent with `context` (mystical/intimate for UI, clear/brief for release)
 
-**Output:** Validated or corrected text
+**Output:** Validated or corrected text with inline notes
+
+**On failure:**
+- Multiple violations → return full rewrite suggestion, do not patch inline
 
 ---
 
 ### ui-copy
 
-**Input:** ui_spec, spec, domain_glossary
+**Trigger:** New UI component or page added
+
+**Input:**
+- `ui_spec` (string, required): Component/page UI specification
+- `spec` (string, required): Feature spec path
+- `domain_glossary` (string, optional): Domain terminology
 
 **Steps:**
-1. For each component, define empty state
-2. For each field, define validation messages
-3. For each action, define confirmations
-4. For each error, define actionable messages
+1. For each component, define empty-state copy
+2. For each form field, define placeholder and validation messages
+3. For each action button, define confirmation messages
+4. For each error state, define actionable error messages
+5. Run `voice-and-tone` skill on all output copy
 
-**Output:** Inventory in `/content/copy/`
+**Output:** Copy inventory in `/content/copy/<feature>.md`
+
+**On failure:**
+- Ambiguous component state → document as `[copy-needed]` and flag for design review
 
 ---
 
 ### release-notes
 
-**Input:** changelog, merged_specs
+**Trigger:** Feature branch merged to main
+
+**Input:**
+- `changelog` (string, required): Git changelog or PR description
+- `merged_specs` (list, required): Paths to merged spec files
 
 **Steps:**
-1. Filter changes relevant to users
-2. Translate technicisms to user language
-3. Order by impact
-4. Add "what it means for you" section
+1. Filter only user-visible changes (exclude refactors, chores, internal tooling)
+2. Translate technical language to user language
+3. Order sections by user impact (high → low)
+4. Add "What this means for you" summary section
 
-**Output:** release-notes.md
+**Output:** `release-notes.md` published to `/content/releases/`
+
+**On failure:**
+- Change is internal only → skip release notes entry, document in `CHANGELOG.md` only
 
 ---
 
 ## Invocation Template
 
+Use this template when defining new skills:
+
 ```markdown
 ### <skill-name>
 
-**Trigger:** <event>
+**Trigger:** <event or condition that activates this skill>
 
 **Input:**
 - `<name>` (`<type>`, required|optional): <description>
@@ -254,9 +393,6 @@
 **Output:**
 - `<artifact>`: <description>
 
-**Checks:**
-- <prerequisite condition>
-
 **On failure:**
-- <action if fails>
+- <condition>: <action if fails>
 ```

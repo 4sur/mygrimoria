@@ -1,6 +1,6 @@
 # 🗺️ MyGrimoria — Roadmap
 
-> **Visión:** Plataforma mística de adivinación con IA (I Ching, Tarot, Runas) con autenticación, historial de tiradas, grimorio personal y blog.
+> **Visión:** Plataforma mística de adivinación con IA (I Ching, Tarot, Runas) con autenticación, historial de tiradas, sanctum personal y blog.
 > 
 > **Stack:** React 19 + Vite + TypeScript + TailwindCSS 4 · FastAPI + Python · **Supabase** (Auth, PostgreSQL) · **DeepSeek** (IA) · WordPress Headless (Blog, opcional)
 
@@ -16,7 +16,7 @@
 | I Ching | Tirada de 6 líneas + hexagrama resultante + chat | ✅ Funcional |
 | Tarot | 3-cartas (Pasado/Presente/Futuro) + chat | ✅ Funcional |
 | Runes | 3-runas (Urd/Verdandi/Skuld) + chat | ✅ Funcional |
-| Grimorio | Historial de lecturas guardadas (datos) | ⚠️ Parcial (sin UI) |
+| Sanctum | Historial de lecturas guardadas (datos) | ⚠️ Parcial (sin UI) |
 | Blog | wpService existe pero no conectado | ❌ Pendiente |
 | Análisis SDD | AGENTS.md + SKILLS.md + README.md | ✅ Completo |
 
@@ -30,7 +30,7 @@
 - [ ] Verificar que el backend funciona con DeepSeek
 - [ ] Eliminar referencias obsoletas en documentación
 
-### Fase 2 — Grimorio UI
+### Phase 2 — Sanctum UI
 
 - [ ] Crear UI para mostrar historial de `/api/history`
 - [ ] Implementar filtros por oráculo (I Ching/Tarot/Runas)
@@ -124,7 +124,7 @@ ALLOWED_ORIGINS=*
 | `/oracle/iching` | I Ching | ✅ |
 | `/oracle/tarot` | Tarot | ✅ |
 | `/oracle/runes` | Runas | ✅ |
-| `/grimorio` | Historial personal | ✅ |
+| `/sanctum` | Historial personal | ✅ |
 | `/sanctum` | Perfil usuario | ✅ |
 
 ---
@@ -158,7 +158,7 @@ ALLOWED_ORIGINS=*
 | Fase | Descripción | Estimación |
 |---|---|---|
 | 1 | Limpieza DeepSeek | 1 día |
-| 2 | Grimorio UI | 2-3 días |
+| 2 | Sanctum UI | 2-3 días |
 | 3 | Blog | 2 días |
 | 4 | UX/UI | 2 días |
 | 5 | Analytics | 1 día |
