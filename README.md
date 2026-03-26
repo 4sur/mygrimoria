@@ -1,5 +1,4 @@
 <div align="center">
-  <img width="200" height="200" alt="MyGrimoria Logo" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
   <h1>MyGrimoria</h1>
   <p>A mystical oracle application for I Ching, Tarot, and Runes readings</p>
 </div>
@@ -139,6 +138,104 @@ mygrimoria/
 | `npm run preview` | Preview production build |
 | `npm run lint` | TypeScript type check |
 | `npm run clean` | Remove dist folder |
+
+---
+
+## Project Audit (SDD Analysis)
+
+### 🔍 Socratic Analysis - Hidden Assumptions & Gaps
+
+| Assumption | Risk Level | Notes |
+|------------|------------|-------|
+| Users have reliable internet | Medium | AI interpretations fail gracefully, but no offline mode |
+| Supabase always available | High | No fallback if Supabase is down |
+| Gemini API always available | Medium | Fallback messages exist, but limited |
+| Dark mode is desired | Low | Implemented via CSS variables, no toggle UI |
+
+### 📋 Spec Review - Functional Requirements
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| I Ching hexagram casting | ✅ Complete | 6-line casting with changing lines |
+| I Ching AI interpretation | ✅ Complete | DeepSeek integration |
+| I Ching chat with Master | ✅ Complete | Session-based chat |
+| I Ching history/save | ✅ Complete | Via /api/history |
+| Tarot 3-card spread | ✅ Complete | Past/Present/Future |
+| Tarot AI interpretation | ✅ Complete | DeepSeek integration |
+| Tarot chat | ✅ Complete | Session-based |
+| Tarot history/save | ✅ Complete | Via /api/history |
+| Runes 3-rune spread | ✅ Complete | Urd/Verdandi/Skuld |
+| Runes AI interpretation | ✅ Complete | DeepSeek integration |
+| Runes chat | ✅ Complete | Session-based |
+| Runes history/save | ✅ Complete | Via /api/history |
+| User authentication | ✅ Complete | Supabase Auth |
+| User profile (Sanctum) | ✅ Complete | /api/me endpoint |
+| Blog integration | ✅ Partial | wpService exists but not fully connected |
+| Grimorio (saved readings) | ⚠️ Partial | Data saved but no dedicated UI |
+
+### 🎨 Design Review - Technical Architecture
+
+| Component | Status | Notes |
+|-----------|--------|-------|
+| Frontend React 19 + Vite | ✅ Good | Modern stack, fast HMR |
+| TailwindCSS 4 | ✅ Good | CSS var-based theming |
+| Motion animations | ✅ Good | Smooth transitions |
+| TypeScript | ✅ Good | Proper typing, some `any` remains |
+| FastAPI backend | ✅ Good | Clean REST structure |
+| SQLAlchemy async | ✅ Good | Modern async patterns |
+| Auth flow | ✅ Good | Supabase JWT + sync_user_profile |
+| API error handling | ✅ Good | Fallback messages on errors |
+
+### 💻 Dev Review - Code Quality
+
+| Area | Status | Notes |
+|------|--------|-------|
+| Code duplication | ⚠️ Medium | Tarot/Runes/Iching pages share ~70% identical logic |
+| Hook separation | ✅ Good | useOracle, useOracleSession well abstracted |
+| Component organization | ✅ Good | Clear directory structure |
+| State management | ⚠️ Medium | Local state heavy, no global store |
+| API services | ✅ Good | Clean separation in api.ts |
+| Environment config | ⚠️ Low | Some hardcoded values (DeepSeek URL) |
+
+### 📊 Data/Analytics Review - Instrumentation
+
+| Area | Status | Notes |
+|------|--------|-------|
+| Event tracking | ❌ Missing | No analytics events defined |
+| User journey tracking | ❌ Missing | No Funnel/Retention tracking |
+| Error reporting | ❌ Missing | Only console.error, no Sentry/etc |
+| Performance monitoring | ❌ Missing | No Core Web Vitals tracking |
+
+---
+
+## 🚧 Known Issues & Technical Debt
+
+1. **No offline support** - Requires internet for any AI feature
+2. **Hardcoded AI URLs** - DeepSeek endpoint in backend/main.py
+3. **Duplicated page logic** - Iching/Tarot/Runes pages should share a base component
+4. **No loading states on initial load** - App crashes if Supabase unavailable
+5. **Blog not connected** - wpService.ts exists but not wired to UI
+6. **Grimorio UI missing** - Data saved, but no dedicated page to browse past readings
+7. **No error boundaries** - React errors can crash entire app
+
+---
+
+## 🎯 Recommendations (Priority Order)
+
+### High Priority
+1. **Add error boundaries** - Wrap pages in ErrorBoundary components
+2. **Connect Grimorio page** - Create UI to browse /api/history
+3. **Fix hardcoded API URLs** - Move to environment variables
+
+### Medium Priority
+4. **Refactor oracle pages** - Create shared `OraclePage` component
+5. **Add analytics** - Implement basic event tracking
+6. **Wire Blog** - Connect wpService to Blog page
+
+### Low Priority
+7. **Add offline mode** - Cache last readings locally
+8. **Performance monitoring** - Add Core Web Vitals
+9. **Dark mode toggle** - Add theme switcher in Header
 
 ---
 
