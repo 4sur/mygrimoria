@@ -27,7 +27,7 @@ The app features user authentication, personal grimorio (spellbook), and AI-powe
 | Routing | React Router DOM 7 |
 | Backend | Python FastAPI |
 | Database | Supabase (PostgreSQL + Auth) |
-| AI | Google Gemini API |
+| AI | DeepSeek API |
 | Build | Vite 6 |
 
 ---
@@ -39,7 +39,7 @@ The app features user authentication, personal grimorio (spellbook), and AI-powe
 - Node.js 18+
 - Python 3.13+
 - Supabase account
-- Gemini API key
+- DeepSeek API key
 
 ### Installation
 
@@ -121,7 +121,7 @@ mygrimoria/
 ## Features
 
 - **Oracle Readings**: Get divinations from I Ching, Tarot, or Runes
-- **AI Interpretation**: Receive AI-powered explanations via Gemini
+- **AI Interpretation**: Receive AI-powered explanations via DeepSeek
 - **User Accounts**: Sign up and login with Supabase Auth
 - **Grimorio**: Save and revisit your readings
 - **Sanctum**: Manage your profile and settings
@@ -149,7 +149,7 @@ mygrimoria/
 |------------|------------|-------|
 | Users have reliable internet | Medium | AI interpretations fail gracefully, but no offline mode |
 | Supabase always available | High | No fallback if Supabase is down |
-| Gemini API always available | Medium | Fallback messages exist, but limited |
+| DeepSeek API always available | Medium | Fallback messages exist, but limited |
 | Dark mode is desired | Low | Implemented via CSS variables, no toggle UI |
 
 ### 📋 Spec Review - Functional Requirements
@@ -236,6 +236,40 @@ mygrimoria/
 7. **Add offline mode** - Cache last readings locally
 8. **Performance monitoring** - Add Core Web Vitals
 9. **Dark mode toggle** - Add theme switcher in Header
+
+---
+
+## 🗺️ Roadmap (Next Steps)
+
+See [ROADMAP.md](./ROADMAP.md) for detailed planning.
+
+### Phase 1 — Cleanup & Stabilization
+- [x] Replace Gemini with DeepSeek ✅
+- Verify backend works with DeepSeek
+- Clean up obsolete references
+
+### Phase 2 — Grimorio UI
+- Create UI to browse `/api/history`
+- Filter by oracle (I Ching/Tarot/Runas)
+- Show saved interpretation + chat history
+
+### Phase 3 — Blog (WordPress Headless)
+- Configure Apollo Client
+- Connect Blog.tsx with WPGraphQL
+
+### Phase 4 — UX/UI Improvements
+- Add error boundaries
+- Improve loading states
+- Add offline mode
+
+### Phase 5 — Analytics
+- Implement basic event tracking
+- Add error reporting (Sentry)
+
+### Phase 6 — Gamification (Future)
+- XP and levels system
+- Badges
+- Credits system
 
 ---
 
