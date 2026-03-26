@@ -1,61 +1,245 @@
-# AGENTS.md - MyGrimoria Development Guide
+# AGENTS.md — MyGrimoria
+
+> Developer guide for MyGrimoria mystical oracle app. Integrates SDD methodology.
+
+---
 
 ## Project Overview
 
-MyGrimoria is a mystical oracle application with React frontend and Python FastAPI backend. The app provides I Ching, Tarot, and Runes readings with Supabase authentication.
+Mystical oracle application providing I Ching, Tarot, and Runes divination with AI interpretations.
 
-## Build Commands
+| Layer | Tech |
+|-------|------|
+| Frontend | React 19 + TypeScript + Vite + TailwindCSS 4 |
+| Backend | Python FastAPI + Supabase |
+| Auth | Supabase Auth |
+| AI | Gemini API |
 
-### Frontend (React + Vite)
+---
+
+## Commands
+
+### Frontend
 ```bash
-# Development server (port 3000)
-npm run dev
-
-# Production build
-npm run build
-
-# Preview build
-npm run preview
-
-# TypeScript lint check
-npm run lint
-
-# Clean dist folder
-npm run clean
+npm run dev          # Dev server (port 3000)
+npm run build        # Production build
+npm run preview      # Preview build
+npm run lint         # TypeScript check
+npm run clean        # Remove dist
 ```
 
-### Backend (Python FastAPI)
+### Backend
 ```bash
 cd backend
-
-# Install dependencies
 pip install -r requirements.txt
-
-# Run development server
-python main.py
-
-# Run with uvicorn
-uvicorn main:app --reload --port 8000
+python main.py       # or: uvicorn main:app --reload --port 8000
 ```
 
-### Running Single Test
-No test framework is currently configured. To add tests:
-```bash
-# Install Vitest for frontend unit tests
-npm install -D vitest @testing-library/react @testing-library/jest-dom jsdom
+---
 
-# Add to package.json scripts:
-# "test": "vitest",
-# "test:run": "vitest run"
+# SDD Pipeline — Agents System
+
+```
+[TRIGGER] → [INTAKE] → [SPEC] → [DESIGN] → [DEV] → [REVIEW] → [MERGED]
 ```
 
-## Code Style Guidelines
+## Agent Phases
 
-### TypeScript Conventions
+| Phase | Agent | Output |
+|-------|-------|--------|
+| Intake | PM Agent | Validated request |
+| Pre-spec | Socratic Agent | Disambiguated requirements |
+| Spec | Spec Agent | `/specs/<domain>/<feature>.spec.md` |
+| Design | Design Agent | `/docs/architecture/<feature>.design.md` |
+| Dev | Backend/Frontend Dev | Code implementation |
+| Review | Review Agent | Approved PR |
+| Post-merge | Data + Marketing | Instrumentation + content |
 
-#### Imports
-- Use absolute imports with `@/` alias (configured in tsconfig.json)
-- Group imports: external first, then internal
+---
+
+## PM Agent (Product Manager)
+
+**Responsibilities:**
+- Define product goals
+- Maintain prioritized backlog
+- Approve features into pipeline
+- Close feedback loop with analytics
+
+**RICE Scoring:**
+```
+RICE = (Reach × Impact × Confidence) / Effort
+```
+- Reach: Users affected per quarter
+- Impact: 3=massive, 2=high, 1=medium, 0.5=low, 0.25=minimal
+- Confidence: 100%=high, 80%=medium, 50%=low
+- Effort: Person-weeks
+
+**Decisions:**
+| Decision | Meaning |
+|----------|---------|
+| `APPROVED` | Enter pipeline |
+| `DEFERRED` | Valid but not now |
+| `REJECTED` | Not built |
+
+---
+
+## Socratic Agent
+
+**Principles:**
+1. Never assert, always ask — identify what you don't know
+2. Deep-level questions — not the obvious, what's beneath the obvious
+3. Detect contradictions — name them directly
+4. Separate facts from assumptions — unvalidated assumptions block progress
+5. Timeboxing — max 3 rounds per session
+
+**Activation:**
+- Pre-spec: Validate requirements before writing
+- Pre-design: Validate technical assumptions
+- On-demand: Any agent can invoke for ambiguity
+
+**Output:**
+- Session documented with Q&A
+- Assumptions marked as `assumptions`
+- Gaps marked as `[human-required]`
+
+---
+
+## Spec Agent
+
+**Input:** Free-form requirement
+**Output:** `/specs/<domain>/<feature>.spec.md` (status: draft)
+
+**Responsibilities:**
+- Extract FR (Functional Requirements) and NFR (Non-Functional)
+- Identify actors, use cases, acceptance criteria
+- Flag ambiguities
+- Define scope boundary
+
+**Must NOT:**
+- Make architectural decisions
+- Write code
+
+**States:** `draft` → `socratic-review` → `approved`
+
+---
+
+## Design Agent
+
+**Input:** Spec `status: approved`
+**Output:** `/docs/architecture/<feature>.design.md`
+
+**Responsibilities:**
+- Define API endpoints
+- Define frontend component tree
+- Define TypeScript interfaces
+- Define DB schema and migrations
+- Cross-cutting: auth, error handling, caching, observability
+
+**Must NOT:**
+- Implement code
+- Deviate from spec requirements
+
+**States:** `draft` → `socratic-review` → `ready-for-dev`
+
+---
+
+## Dev Agent (Backend + Frontend)
+
+**Backend:**
+- Input: Design doc `status: ready-for-dev` + OpenAPI contract
+- Output: Code in `/backend`
+
+**Frontend:**
+- Input: Design doc + UI spec + OpenAPI contract
+- Output: Code in `/src`
+
+**Modes:**
+- **simple**: Component + State in one file
+- **full**: UI Spec → Design System → Component → State
+
+**Constraints:**
+- Do not invent requirements
+- Do not introduce dependencies without ADR
+- Follow project conventions
+
+**States:** `not-started` → `in-progress` → `pr-opened` → `done`
+
+---
+
+## Review Agent
+
+**Input:** PR url + spec + design doc + contract + test results
+**Output:** Approval or changes required
+
+**Checklist:**
+- [ ] Code follows spec and design
+- [ ] Tests pass
+- [ ] Lint passes
+- [ ] No breaking changes without ADR
+- [ ] Tracking instrumentation present
+- [ ] Environment variables documented
+
+**Decisions:**
+| Decision | Action |
+|----------|--------|
+| ✅ Approved | Direct merge |
+| ❌ Changes required | Dev retry (max 3) |
+| ⚠️ Breaking change | Human gate |
+
+---
+
+## Data/Analytics Agent
+
+**Instrumentation:**
+- Input: Approved spec + tracking plan + OpenAPI contract
+- Output: Updated tracking plan + typed events
+
+**Event Model:**
+```typescript
+// <entity>_<past_verb>
+feature_created, export_completed, search_performed
+
+// Base schema
+{
+  timestamp: number,    // Unix ms
+  session_id: string,   // UUID
+  user_id: string,      // Anonymized
+  user_role: RoleEnum,
+  platform: PlatformEnum
+}
+```
+
+---
+
+## Marketing Agent
+
+**Copy Agent:**
+- Input: UI spec + spec + domain glossary
+- Output: UI strings inventory
+
+**Release Agent:**
+- Input: Changelog + merged specs
+- Output: Release notes, announcements
+
+**SEO Agent:**
+- Input: Approved spec + validated AC
+- Output: SEO pages, FAQs, user docs
+
+**Principles:**
+- No inventing — all content traceable to SDD artifacts
+- Clear before clever
+- Subject is the user
+- No filler
+
+---
+
+# Code Style Guidelines
+
+## TypeScript
+
+### Imports
+- Use `@/` alias (configured in tsconfig.json)
+- Group: external first, then internal
 - Use `import { type X }` for type-only imports
 
 ```typescript
@@ -64,171 +248,112 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 import { useOracle } from '@/hooks/useOracle';
 import type { Reading } from '@/types';
-import { HexagramDisplay } from '@/components/HexagramDisplay';
-
-// Bad
-import { useOracle } from '../hooks/useOracle';
-import { Reading } from '../types/index';
 ```
 
-#### Naming Conventions
-- **Components**: PascalCase (`HexagramDetail`, `LoginPage`)
-- **Hooks**: camelCase with `use` prefix (`useOracle`, `useOracleSession`)
-- **Types/Interfaces**: PascalCase (`Reading`, `TarotReading`)
-- **Constants**: PascalCase for enums (`Hexagram`, `Rune`), SCREAMING_Snake for config
-- **Files**: kebab-case for components (`hexagram-detail.tsx`), camelCase for utilities
-
-#### Type Annotations
-- Use explicit return types for functions exported from modules
-- Prefer `type` over `interface` for simple object shapes
-- Use `import { type X }` syntax
-
-```typescript
-// Good
-export interface Reading {
-    lines: LineValue[];
-    primaryHexagram: Hexagram;
-    changingHexagram?: Hexagram;
-    timestamp: number;
-}
-
-// Good - type alias
-export type LineValue = 6 | 7 | 8 | 9;
-```
+### Naming
+- Components: PascalCase (`HexagramDetail`, `LoginPage`)
+- Hooks: `use` prefix (`useOracle`, `useOracleSession`)
+- Types: PascalCase (`Reading`, `TarotReading`)
+- Files: kebab-case components, camelCase utilities
 
 ### React Patterns
-
-#### Component Structure
 ```typescript
-import React from 'react';
-import { useState, useEffect } from 'react';
-import type { ComponentProps } from '@/types';
-
 interface Props {
-    title: string;
-    onComplete?: () => void;
+  title: string;
+  onComplete?: () => void;
 }
 
 export function HexagramDetail({ title, onComplete }: Props) {
-    const [loading, setLoading] = useState(false);
-    
-    useEffect(() => {
-        // effect logic
-    }, []);
-    
-    return (
-        <div className="hexagram-detail">
-            {/* JSX */}
-        </div>
-    );
+  const [loading, setLoading] = useState(false);
+  
+  useEffect(() => {
+    // effect logic
+  }, []);
+  
+  return <div className="hexagram-detail">{/* JSX */}</div>;
 }
 ```
 
-#### Hooks
-- Always prefix with `use` (e.g., `useOracle`)
-- Return typed objects
-- Use custom hooks for reusable logic
-
-### Error Handling
-
+## Error Handling
 ```typescript
-// API calls - handle errors gracefully
 try {
-    const { data, error } = await supabase.from('readings').select('*');
-    if (error) throw error;
-    return data;
+  const { data, error } = await supabase.from('readings').select('*');
+  if (error) throw error;
+  return data;
 } catch (err) {
-    console.error('Failed to fetch readings:', err);
-    return [];
+  console.error('Failed to fetch readings:', err);
+  return [];
 }
-
-// For user-facing errors, use toast/notification
 ```
 
-### Environment Variables
-
-Required in `.env`:
-```
-VITE_SUPABASE_URL=your_supabase_url
-VITE_SUPABASE_ANON_KEY=your_anon_key
-GEMINI_API_KEY=your_gemini_key
-```
-
-### TailwindCSS 4
-
-This project uses TailwindCSS v4. Use utility classes directly:
-```typescript
-// Good
-<div className="flex items-center justify-between p-4 bg-slate-900">
-
-// Avoid custom CSS modules when possible
-```
-
-### Backend Python (FastAPI)
-
-#### Structure
-```
-backend/
-├── main.py          # FastAPI app entry point
-├── auth.py          # Authentication logic
-├── models.py        # SQLAlchemy/Pydantic models
-├── database.py      # Database connection
-├── constants/      # Static data
-└── alembic/        # Database migrations
-```
-
-#### Patterns
-- Use Pydantic models for request/response validation
-- Use Supabase client for database operations
-- Return appropriate HTTP status codes
+---
 
 ## Project Structure
 
 ```
-src/
-├── App.tsx                 # Main app with routes
-├── main.tsx               # Entry point
-├── index.css              # Global styles (Tailwind)
-├── assets/                # Static assets
-├── components/            # Reusable UI components
-│   ├── Auth/              # Auth components
-│   └── Layout/            # Layout components
-├── pages/                 # Route pages
-│   ├── Home/
-│   ├── Blog/
-│   ├── Iching/
-│   ├── Tarot/
-│   ├── Runes/
-│   ├── Oracle/
-│   ├── Grimorio/
-│   └── Sanctum/
-├── hooks/                 # Custom React hooks
-├── context/               # React context providers
-├── services/              # API services
-├── lib/                   # Utilities (Supabase client)
-├── constants/             # Static data (tarot.ts, runes.ts, iching.ts)
-└── types/                 # TypeScript type definitions
+mygrimoria/
+├── src/
+│   ├── App.tsx              # Routes
+│   ├── main.tsx             # Entry
+│   ├── index.css            # Tailwind
+│   ├── components/         # UI components
+│   │   ├── Auth/           # Auth (ProtectedRoute)
+│   │   └── Layout/         # Layout (Header, Footer, Layout)
+│   ├── pages/              # Route pages
+│   │   ├── Home/
+│   │   ├── Blog/
+│   │   ├── Iching/
+│   │   ├── Tarot/
+│   │   ├── Runes/
+│   │   ├── Oracle/
+│   │   ├── Grimorio/
+│   │   ├── Sanctum/
+│   │   └── Login/
+│   ├── hooks/              # Custom hooks (useOracle, useOracleSession)
+│   ├── context/            # Context (Auth, Theme)
+│   ├── services/           # API (api.ts, wpService.ts)
+│   ├── lib/                # Utils (supabase.ts)
+│   ├── constants/          # Oracle data (tarot, runes, iching)
+│   └── types/              # TypeScript types
+├── backend/
+│   ├── main.py             # FastAPI entry
+│   ├── auth.py             # Auth logic
+│   ├── models.py           # DB models
+│   ├── database.py         # DB connection
+│   ├── constants/          # Backend data
+│   └── alembic/            # Migrations
+├── stitch/                 # Design prototypes
+└── AGENTS.md              # This file
 ```
 
-## Common Development Tasks
+---
 
-### Adding a New Page
-1. Create component in `src/pages/NewPage/`
-2. Add route in `App.tsx`
-3. Use `ProtectedRoute` if auth required
+## Development Workflow (SDD)
 
-### Adding a New Oracle Type
-1. Add constants in `src/constants/`
-2. Add types in `src/types/index.ts`
-3. Create page component
+1. **Intake**: PM validates and prioritizes request
+2. **Socratic**: Clarify requirements, identify assumptions
+3. **Spec**: Write feature specification
+4. **Design**: Technical architecture
+5. **Dev**: Implement code
+6. **Review**: Validate against spec
+7. **Merge**: Deploy to production
+
+---
+
+## Adding New Features
+
+1. Create spec in `/specs/<domain>/<feature>.spec.md`
+2. Create design in `/docs/architecture/<feature>.design.md`
+3. Implement in `/src/pages/` (frontend) or `/backend/` (backend)
 4. Add route in `App.tsx`
+5. Use `ProtectedRoute` for auth-required pages
 
-### Database Changes
-1. Modify models in `backend/models.py`
-2. Generate Alembic migration: `alembic revision --autogenerate -m "description"`
-3. Run migration: `alembic upgrade head`
+---
 
-## IDE Recommendations
+## Environment Variables
 
-- VS Code with extensions: ESLint, Prettier, TailwindCSS IntelliSense
-- Enable "Format on Save" for TypeScript and CSS
+```env
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_ANON_KEY=your_anon_key
+GEMINI_API_KEY=your_gemini_key
+```
