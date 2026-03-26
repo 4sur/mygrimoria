@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, JSON, SmallInteger, ARRAY, UUID, text
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, JSON, SmallInteger, ARRAY, UUID, text, Date
 from sqlalchemy.orm import relationship
 from database import Base
 import datetime
@@ -15,6 +15,15 @@ class UserProfile(Base):
     credits = Column(Integer, default=50) # Initial credits
     is_admin = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    
+    # Profile fields for oracle personalization
+    display_name = Column(String, nullable=True)
+    avatar_url = Column(String, nullable=True)
+    birth_date = Column(Date, nullable=True)
+    birth_place = Column(String, nullable=True)
+    current_place = Column(String, nullable=True)
+    gender = Column(String, nullable=True)  # 'male', 'female', 'other', null
+    prompt_context = Column(String, nullable=True)  # Custom notes for AI context
     
     sessions = relationship("OracleSession", back_populates="user")
 

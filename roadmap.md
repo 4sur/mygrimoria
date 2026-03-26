@@ -18,6 +18,7 @@
 | Runes | 3-runas (Urd/Verdandi/Skuld) + chat | ✅ Funcional |
 | Sanctum | Historial completo con filtros, favoritos y delete | ✅ Completo |
 | Blog | wpService existe pero no conectado | ❌ Pendiente |
+| User Profile | Perfil personalizable con datos para prompts | ✅ Completo v1.1 |
 | Análisis SDD | AGENTS.md + SKILLS.md + README.md | ✅ Completo |
 
 ---
@@ -36,6 +37,21 @@
 - [x] Implementar filtros por oráculo (I Ching/Tarot/Runas)
 - [x] Mostrar interpretación guardada y chat history
 - [x] Permitir eliminar/favoritear lecturas
+
+### Fase 2.5 — User Profile
+
+- [x] Añadir columnas a user_profiles (display_name, avatar_url, birth_date, birth_place, current_place, gender, prompt_context)
+- [x] Crear migración Alembic
+- [x] Crear endpoints GET/PUT `/api/profile`
+- [x] Crear página `/profile` en frontend
+- [x] Actualizar Header (Admin → Profile para todos los usuarios)
+
+### Fase 2.6 — Enhanced Prompts
+
+- [x] Añadir función `build_user_context()` en backend
+- [x] Mejorar prompt de I Ching con datos del usuario
+- [x] Mejorar prompt de Tarot con datos del usuario
+- [x] Mejorar prompt de Runes con datos del usuario
 
 ### Fase 3 — Blog (WordPress Headless)
 

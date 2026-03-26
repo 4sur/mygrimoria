@@ -88,6 +88,34 @@ class SaveChatRequest(BaseModel):
 
 ChatRequest.model_rebuild()
 
+def build_user_context(profile) -> str:
+    """Build user context string from profile data for AI prompts."""
+    context_parts = []
+    
+    if profile.display_name:
+        context_parts.append(f"El consultante se llama {profile.display_name}")
+    if profile.birth_date:
+        from datetime import date
+        today = date.today()
+        age = today.year - profile.birth_date.year - ((today.month, today.day) < (profile.birth_date.month, profile.birth_date.day))
+        context_parts.append(f"nacido/a el {profile.birth_date.strftime('%d de %B de %Y')} (actualmente {age} años)")
+    if profile.birth_place:
+        context_parts.append(f"en {profile.birth_place}")
+    if profile.current_place:
+        if context_parts:
+            context_parts[-1] += f", actualmente reside en {profile.current_place}"
+        else:
+            context_parts.append(f"Actualmente reside en {profile.current_place}")
+    if profile.gender:
+        gender_text = {"male": "varón", "female": "mujer", "other": "otro género"}.get(profile.gender, profile.gender)
+        context_parts.append(f"se identifica como {gender_text}")
+    if profile.prompt_context:
+        context_parts.append(f"contexto adicional: {profile.prompt_context}")
+    
+    if context_parts:
+        return ". ".join(context_parts) + "."
+    return ""
+
 @app.post("/api/iching/interpret")
 async def interpret_hexagram(
     request: IchingInterpretRequest,
@@ -96,6 +124,9 @@ async def interpret_hexagram(
 ):
     # Ensure user profile exists
     user_profile = await sync_user_profile(current_user, db)
+    
+    # Build user context for the prompt
+    user_context = build_user_context(user_profile)
     
     # Create Oracle Session
     session = OracleSession(
@@ -157,6 +188,7 @@ RESULTANT HEXAGRAM (The state things are moving toward):
     user_prompt += f"""
 Provide a deep, zen-like interpretation of this result. Focus especially on the transition indicated by the changing lines and how the primary energy is evolving into the resultant state.
 {f"\nUser's question/context: {request.userContext}" if request.userContext else ""}
+{f"\nUser profile context: {user_context}" if user_context else ""}
 
 Keep the tone calm, minimalist, and insightful. Use Markdown for formatting."""
     
@@ -242,6 +274,9 @@ async def interpret_tarot(
     # Ensure user profile exists
     user_profile = await sync_user_profile(current_user, db)
     
+    # Build user context for the prompt
+    user_context = build_user_context(user_profile)
+    
     # Create Oracle Session
     session = OracleSession(
         user_id=user_profile.id,
@@ -271,7 +306,8 @@ async def interpret_tarot(
     Keep the tone calm, minimalist, and insightful. Focus on growth and awareness rather than rigid fortune-telling.
     Use Markdown for formatting.
     
-    {f"The user's question/context: {request.userContext}" if request.userContext else ""}"""
+    {f"The user's question/context: {request.userContext}" if request.userContext else ""}
+    {f"User profile context: {user_context}" if user_context else ""}"""
     
     interpretation_text = ""
     try:
@@ -339,6 +375,9 @@ async def interpret_runes(
     # Ensure user profile exists
     user_profile = await sync_user_profile(current_user, db)
     
+    # Build user context for the prompt
+    user_context = build_user_context(user_profile)
+    
     # Create Oracle Session
     session = OracleSession(
         user_id=user_profile.id,
@@ -368,7 +407,8 @@ async def interpret_runes(
     Keep the tone grounded, slightly mystical, yet direct and minimalist. Focus on the cyclical nature of life, resilience, and personal truth.
     Use Markdown for formatting.
     
-    {f"The user's question/context: {request.userContext}" if request.userContext else ""}"""
+    {f"The user's question/context: {request.userContext}" if request.userContext else ""}
+    {f"User profile context: {user_context}" if user_context else ""}"""
     
     interpretation_text = ""
     try:
@@ -488,6 +528,74 @@ async def get_my_profile(
 ):
     profile = await sync_user_profile(current_user, db)
     return profile
+
+class ProfileUpdateRequest(BaseModel):
+    display_name: Optional[str] = None
+    avatar_url: Optional[str] = None
+    birth_date: Optional[str] = None
+    birth_place: Optional[str] = None
+    current_place: Optional[str] = None
+    gender: Optional[str] = None
+    prompt_context: Optional[str] = None
+
+@app.get("/api/profile")
+async def get_profile(
+    current_user: dict = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    profile = await sync_user_profile(current_user, db)
+    return {
+        "id": str(profile.id),
+        "email": profile.email,
+        "display_name": profile.display_name,
+        "avatar_url": profile.avatar_url,
+        "birth_date": profile.birth_date.isoformat() if profile.birth_date else None,
+        "birth_place": profile.birth_place,
+        "current_place": profile.current_place,
+        "gender": profile.gender,
+        "prompt_context": profile.prompt_context,
+        "level": profile.level,
+        "xp": profile.xp,
+        "credits": profile.credits
+    }
+
+@app.put("/api/profile")
+async def update_profile(
+    request: ProfileUpdateRequest,
+    current_user: dict = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    profile = await sync_user_profile(current_user, db)
+    
+    if request.display_name is not None:
+        profile.display_name = request.display_name
+    if request.avatar_url is not None:
+        profile.avatar_url = request.avatar_url
+    if request.birth_date is not None:
+        from datetime import datetime
+        profile.birth_date = datetime.strptime(request.birth_date, "%Y-%m-%d").date()
+    if request.birth_place is not None:
+        profile.birth_place = request.birth_place
+    if request.current_place is not None:
+        profile.current_place = request.current_place
+    if request.gender is not None:
+        profile.gender = request.gender
+    if request.prompt_context is not None:
+        profile.prompt_context = request.prompt_context
+    
+    await db.commit()
+    await db.refresh(profile)
+    
+    return {
+        "id": str(profile.id),
+        "display_name": profile.display_name,
+        "avatar_url": profile.avatar_url,
+        "birth_date": profile.birth_date.isoformat() if profile.birth_date else None,
+        "birth_place": profile.birth_place,
+        "current_place": profile.current_place,
+        "gender": profile.gender,
+        "prompt_context": profile.prompt_context
+    }
 
 @app.get("/api/history")
 async def get_oracle_history(

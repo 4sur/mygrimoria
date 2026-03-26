@@ -40,10 +40,10 @@ export const Header: React.FC = () => {
                     <Link to="/blog" className={`zen-nav-link ${isActive('/blog') ? 'zen-nav-link-active' : ''}`}>Blog</Link>
                     <Link to="/oracle" className={`zen-nav-link ${isActive('/oracle') || isActive('/oracle/iching') ? 'zen-nav-link-active' : ''}`}>Oracle</Link>
                     {isLoggedIn && (
-                        <Link to="/sanctum" className={`zen-nav-link ${isActive('/sanctum') ? 'zen-nav-link-active' : ''}`}>Sanctum</Link>
-                    )}
-                    {profile?.is_admin && (
-                        <Link to="/admin" className={`zen-nav-link ${isActive('/admin') ? 'zen-nav-link-active' : ''}`}>Admin</Link>
+                        <>
+                            <Link to="/sanctum" className={`zen-nav-link ${isActive('/sanctum') ? 'zen-nav-link-active' : ''}`}>Sanctum</Link>
+                            <Link to="/profile" className={`zen-nav-link ${isActive('/profile') ? 'zen-nav-link-active' : ''}`}>Profile</Link>
+                        </>
                     )}
                 </nav>
 
@@ -141,22 +141,22 @@ export const Header: React.FC = () => {
                                     Oracle
                                 </Link>
                                 {isLoggedIn && (
-                                    <Link
-                                        to="/sanctum"
-                                        className={`text-4xl font-serif ${isActive('/sanctum') ? 'opacity-100 font-bold' : 'opacity-40'}`}
-                                        onClick={() => setIsMenuOpen(false)}
-                                    >
-                                        Sanctum
-                                    </Link>
-                                )}
-                                {profile?.is_admin && (
-                                    <Link
-                                        to="/admin"
-                                        className={`text-4xl font-serif ${isActive('/admin') ? 'opacity-100 font-bold' : 'opacity-40'}`}
-                                        onClick={() => setIsMenuOpen(false)}
-                                    >
-                                        Admin
-                                    </Link>
+                                    <>
+                                        <Link
+                                            to="/sanctum"
+                                            className={`text-4xl font-serif ${isActive('/sanctum') ? 'opacity-100 font-bold' : 'opacity-40'}`}
+                                            onClick={() => setIsMenuOpen(false)}
+                                        >
+                                            Sanctum
+                                        </Link>
+                                        <Link
+                                            to="/profile"
+                                            className={`text-4xl font-serif ${isActive('/profile') ? 'opacity-100 font-bold' : 'opacity-40'}`}
+                                            onClick={() => setIsMenuOpen(false)}
+                                        >
+                                            Profile
+                                        </Link>
+                                    </>
                                 )}
                             </nav>
 

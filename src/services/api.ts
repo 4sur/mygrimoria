@@ -33,6 +33,17 @@ export const api = {
         return response.json();
     },
 
+    async put(endpoint: string, body: any) {
+        const headers = await getAuthHeaders();
+        const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+            method: 'PUT',
+            headers,
+            body: JSON.stringify(body),
+        });
+        if (!response.ok) throw new Error(`API error: ${response.statusText}`);
+        return response.json();
+    },
+
     async delete(endpoint: string) {
         const headers = await getAuthHeaders();
         const response = await fetch(`${API_BASE_URL}${endpoint}`, {
@@ -87,6 +98,22 @@ export const chatWithRunemaster = async (history: any[]) => {
 // Profile methods
 export const getMyProfile = async () => {
     return api.get('/api/me');
+};
+
+export const getProfile = async () => {
+    return api.get('/api/profile');
+};
+
+export const updateProfile = async (data: {
+    display_name?: string;
+    avatar_url?: string;
+    birth_date?: string;
+    birth_place?: string;
+    current_place?: string;
+    gender?: string;
+    prompt_context?: string;
+}) => {
+    return api.put('/api/profile', data);
 };
 
 // Save chat history

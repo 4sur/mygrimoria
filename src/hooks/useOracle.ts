@@ -1,7 +1,8 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { type LineValue, type Reading, type Message } from '../types';
 import { getHexagramByBinary, type Hexagram } from '../constants/iching';
-import { interpretHexagram, chatWithMaster } from '../services/api';
+import { interpretHexagram, chatWithMaster, getHistory } from '../services/api';
+import { useOracleIntent } from '../context/OracleIntentContext';
 
 export const useOracle = () => {
     const [lines, setLines] = useState<LineValue[]>([]);
@@ -11,6 +12,28 @@ export const useOracle = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [history, setHistory] = useState<(Reading & { session_id?: string })[]>([]);
     const [question, setQuestion] = useState('');
+    const { intent, clearIntent } = useOracleIntent();
+
+    useEffect(() => {
+        if (intent?.question) {
+            setQuestion(intent.question);
+            clearIntent();
+        }
+    }, [intent, clearIntent]);
+
+    useEffect(() => {
+        const loadHistory = async () => {
+            try {
+                const data = await getHistory();
+                if (data && data.readings) {
+                    setHistory(data.readings.filter((r: any) => r.oracle_type === 'iching'));
+                }
+            } catch (err) {
+                console.error('Failed to load history:', err);
+            }
+        };
+        loadHistory();
+    }, []);
 
     const castLine = useCallback(() => {
         if (lines.length >= 6) return;
@@ -59,7 +82,20 @@ export const useOracle = () => {
 
         setIsLoading(true);
         try {
-            const data = await interpretHexagram(primaryHex, finalLines, question, changingHex);
+            const hexagramData = {
+                number: primaryHex.number,
+                name: primaryHex.name,
+                chineseName: primaryHex.chineseName,
+                meaning: primaryHex.meaning
+            };
+            const resultantHexagramData = changingHex ? {
+                number: changingHex.number,
+                name: changingHex.name,
+                chineseName: changingHex.chineseName,
+                meaning: changingHex.meaning
+            } : undefined;
+            
+            const data = await interpretHexagram(hexagramData, finalLines, question, resultantHexagramData);
             const { text, session_id } = data;
 
             const enrichedReading = { ...newReading, session_id };
@@ -102,12 +138,11 @@ export const useOracle = () => {
         setLines([]);
         setReading(null);
         setMessages([]);
-        setQuestion('');
     }, []);
 
     const selectFromHistory = useCallback((reading: Reading) => {
         setReading(reading);
-        setMessages([]); // Or load previous if stored
+        setMessages([]);
     }, []);
 
     return {
