@@ -550,9 +550,56 @@ async def get_oracle_history(
             {"role": cm.role, "text": cm.content}
             for cm in s.chat_messages
         ]
+        entry["is_favorite"] = s.is_favorite
         formatted_history.append(entry)
         
     return formatted_history
+
+@app.delete("/api/sessions/{session_id}")
+async def delete_session(
+    session_id: str,
+    current_user: dict = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    user_profile = await sync_user_profile(current_user, db)
+    
+    result = await db.execute(
+        select(OracleSession)
+        .where(OracleSession.id == session_id)
+        .where(OracleSession.user_id == user_profile.id)
+    )
+    session = result.scalar_one_or_none()
+    
+    if not session:
+        raise HTTPException(status_code=404, detail="Session not found")
+    
+    await db.delete(session)
+    await db.commit()
+    
+    return {"status": "deleted"}
+
+@app.post("/api/sessions/{session_id}/favorite")
+async def toggle_favorite(
+    session_id: str,
+    current_user: dict = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    user_profile = await sync_user_profile(current_user, db)
+    
+    result = await db.execute(
+        select(OracleSession)
+        .where(OracleSession.id == session_id)
+        .where(OracleSession.user_id == user_profile.id)
+    )
+    session = result.scalar_one_or_none()
+    
+    if not session:
+        raise HTTPException(status_code=404, detail="Session not found")
+    
+    session.is_favorite = not session.is_favorite
+    await db.commit()
+    
+    return {"is_favorite": session.is_favorite}
 
 if __name__ == "__main__":
     import uvicorn

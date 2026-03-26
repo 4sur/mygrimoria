@@ -16,7 +16,7 @@
 | I Ching | Tirada de 6 líneas + hexagrama resultante + chat | ✅ Funcional |
 | Tarot | 3-cartas (Pasado/Presente/Futuro) + chat | ✅ Funcional |
 | Runes | 3-runas (Urd/Verdandi/Skuld) + chat | ✅ Funcional |
-| Sanctum | Historial de lecturas guardadas (datos) | ⚠️ Parcial (sin UI) |
+| Sanctum | Historial completo con filtros, favoritos y delete | ✅ Completo |
 | Blog | wpService existe pero no conectado | ❌ Pendiente |
 | Análisis SDD | AGENTS.md + SKILLS.md + README.md | ✅ Completo |
 
@@ -27,15 +27,15 @@
 ### Fase 1 — Limpieza y Estabilización
 
 - [x] ~~Gemini → DeepSeek~~ (Completado)
-- [ ] Verificar que el backend funciona con DeepSeek
-- [ ] Eliminar referencias obsoletas en documentación
+- [x] Verificar que el backend funciona con DeepSeek
+- [x] Eliminar referencias obsoletas en documentación
 
 ### Phase 2 — Sanctum UI
 
-- [ ] Crear UI para mostrar historial de `/api/history`
-- [ ] Implementar filtros por oráculo (I Ching/Tarot/Runas)
-- [ ] Mostrar interpretación guardada y chat history
-- [ ] Permitir eliminar/favoritear lecturas
+- [x] Crear UI para mostrar historial de `/api/history`
+- [x] Implementar filtros por oráculo (I Ching/Tarot/Runas)
+- [x] Mostrar interpretación guardada y chat history
+- [x] Permitir eliminar/favoritear lecturas
 
 ### Fase 3 — Blog (WordPress Headless)
 

@@ -25,6 +25,7 @@ class OracleSession(Base):
     user_id = Column(UUID, ForeignKey("user_profiles.id", ondelete="CASCADE"))
     oracle_type = Column(String) # 'iching', 'tarot', 'runes'
     question = Column(String, nullable=True)
+    is_favorite = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
 
     user = relationship("UserProfile", back_populates="sessions")

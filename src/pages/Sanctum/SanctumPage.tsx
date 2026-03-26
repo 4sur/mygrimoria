@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { getHistory } from '../../services/api';
+import { getHistory, deleteReading, toggleFavorite } from '../../services/api';
 import ReactMarkdown from 'react-markdown';
 import {
     User,
@@ -18,6 +18,7 @@ import {
     MessageSquare,
     Zap,
     Star,
+    Trash2,
     ShoppingBag,
     TrendingUp,
 } from 'lucide-react';
@@ -166,6 +167,7 @@ const SanctumPage: React.FC = () => {
     const [selectedReading, setSelectedReading] = useState<any>(null);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [showDialogue, setShowDialogue] = useState(false);
+    const [selectedFilter, setSelectedFilter] = useState<'all' | 'tarot' | 'runes' | 'iching'>('all');
 
     useEffect(() => {
         const fetchHistory = async () => {
@@ -181,10 +183,46 @@ const SanctumPage: React.FC = () => {
         fetchHistory();
     }, []);
 
+    const filteredReadings = selectedFilter === 'all' 
+        ? readings 
+        : readings.filter(r => r.oracle === selectedFilter);
+
+    const filterLabels = [
+        { key: 'all', label: 'All Readings' },
+        { key: 'tarot', label: 'Tarot' },
+        { key: 'runes', label: 'Runes' },
+        { key: 'iching', label: 'I Ching' },
+    ] as const;
+
     const handleOpenReading = (reading: any) => {
         setSelectedReading(reading);
         setIsDrawerOpen(true);
         setShowDialogue(false);
+    };
+
+    const handleToggleFavorite = async (sessionId: string) => {
+        try {
+            const result = await toggleFavorite(sessionId);
+            setReadings(prev => prev.map(r => 
+                r.id === sessionId ? { ...r, is_favorite: result.is_favorite } : r
+            ));
+            if (selectedReading?.id === sessionId) {
+                setSelectedReading(prev => ({ ...prev, is_favorite: result.is_favorite }));
+            }
+        } catch (err) {
+            console.error("Error toggling favorite:", err);
+        }
+    };
+
+    const handleDeleteReading = async (sessionId: string) => {
+        if (!confirm("Are you sure you want to delete this reading?")) return;
+        try {
+            await deleteReading(sessionId);
+            setReadings(prev => prev.filter(r => r.id !== sessionId));
+            setIsDrawerOpen(false);
+        } catch (err) {
+            console.error("Error deleting reading:", err);
+        }
     };
 
     const username = user?.email?.split('@')[0] || 'Acolyte';
@@ -233,16 +271,17 @@ const SanctumPage: React.FC = () => {
                     {/* Filters */}
                     <section className="space-y-12">
                         <div className="flex flex-wrap gap-8 md:gap-12 border-b border-ink/5 dark:border-white/5 pb-6">
-                            {['All Readings', 'Tarot', 'Runes', 'I Ching'].map((filter, i) => (
+                            {filterLabels.map((filter, i) => (
                                 <button
-                                    key={filter}
+                                    key={filter.key}
+                                    onClick={() => setSelectedFilter(filter.key)}
                                     className={`relative pb-2 text-sm uppercase tracking-[0.2em] font-bold transition-all duration-300
-                                        ${i === 0
+                                        ${selectedFilter === filter.key
                                             ? 'text-ink dark:text-white'
                                             : 'text-ink/30 dark:text-white/30 hover:text-ink dark:hover:text-white'}`}
                                 >
-                                    {filter}
-                                    {i === 0 && (
+                                    {filter.label}
+                                    {selectedFilter === filter.key && (
                                         <motion.div
                                             layoutId="sanctumFilter"
                                             className="absolute bottom-0 left-0 right-0 h-0.5 bg-ink dark:bg-white"
@@ -270,7 +309,7 @@ const SanctumPage: React.FC = () => {
                                         The archive is empty. Begin your journey.
                                     </div>
                                 ) : (
-                                    readings.map((reading, index) => (
+                                    filteredReadings.map((reading, index) => (
                                         <motion.div
                                             key={reading.id}
                                             initial={{ opacity: 0, y: 10 }}
@@ -332,12 +371,31 @@ const SanctumPage: React.FC = () => {
                                             {selectedReading?.inquiry}
                                         </h3>
                                     </div>
-                                    <button
-                                        onClick={() => setIsDrawerOpen(false)}
-                                        className="p-3 rounded-full hover:bg-ink/5 dark:hover:bg-white/5 transition-colors text-ink/40 dark:text-white/40 hover:text-ink dark:hover:text-white"
-                                    >
-                                        <X size={24} />
-                                    </button>
+                                    <div className="flex items-center gap-2">
+                                        <button
+                                            onClick={() => selectedReading && handleToggleFavorite(selectedReading.id)}
+                                            className="p-3 rounded-full hover:bg-ink/5 dark:hover:bg-white/5 transition-colors text-ink/40 dark:text-white/40 hover:text-amber-500 dark:hover:text-amber-400"
+                                            title="Toggle favorite"
+                                        >
+                                            <Star 
+                                                size={20} 
+                                                className={selectedReading?.is_favorite ? "fill-amber-500 text-amber-500" : ""} 
+                                            />
+                                        </button>
+                                        <button
+                                            onClick={() => selectedReading && handleDeleteReading(selectedReading.id)}
+                                            className="p-3 rounded-full hover:bg-ink/5 dark:hover:bg-white/5 transition-colors text-ink/40 dark:text-white/40 hover:text-red-500 dark:hover:text-red-400"
+                                            title="Delete reading"
+                                        >
+                                            <Trash2 size={20} />
+                                        </button>
+                                        <button
+                                            onClick={() => setIsDrawerOpen(false)}
+                                            className="p-3 rounded-full hover:bg-ink/5 dark:hover:bg-white/5 transition-colors text-ink/40 dark:text-white/40 hover:text-ink dark:hover:text-white"
+                                        >
+                                            <X size={24} />
+                                        </button>
+                                    </div>
                                 </div>
 
                                 {/* Drawer Body */}

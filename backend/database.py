@@ -9,7 +9,7 @@ if database_url and database_url.startswith("postgresql://"):
     database_url = database_url.replace("postgresql://", "postgresql+asyncpg://", 1)
 
 # Fix for pgbouncer parameter in asyncpg
-if "?pgbouncer=true" in database_url:
+if database_url and "?pgbouncer=true" in database_url:
     database_url = database_url.replace("?pgbouncer=true", "")
 
 if not database_url:

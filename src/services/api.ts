@@ -32,6 +32,16 @@ export const api = {
         if (!response.ok) throw new Error(`API error: ${response.statusText}`);
         return response.json();
     },
+
+    async delete(endpoint: string) {
+        const headers = await getAuthHeaders();
+        const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+            method: 'DELETE',
+            headers,
+        });
+        if (!response.ok) throw new Error(`API error: ${response.statusText}`);
+        return response.json();
+    },
 };
 
 // I Ching specific methods
@@ -82,4 +92,14 @@ export const getMyProfile = async () => {
 // Save chat history
 export const saveChatHistory = async (sessionId: string | null, messages: { role: string; text: string }[]) => {
     return api.post('/api/chat/save', { session_id: sessionId, messages });
+};
+
+// Delete reading
+export const deleteReading = async (sessionId: string) => {
+    return api.delete(`/api/sessions/${sessionId}`);
+};
+
+// Toggle favorite
+export const toggleFavorite = async (sessionId: string) => {
+    return api.post(`/api/sessions/${sessionId}/favorite`, {});
 };
