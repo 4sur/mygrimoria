@@ -14,6 +14,7 @@ import { HexagramDisplay } from '../../components/HexagramDisplay';
 import { HexagramDetail } from '../../components/HexagramDetail';
 import { Typewriter } from '../../components/Typewriter';
 import { LoadingOracle } from '../../components/LoadingOracle';
+import { XpGainToast, useXpGain } from '../../components/XpGainToast';
 import { interpretHexagram, chatWithMaster, saveChatHistory } from '../../services/api';
 import { type Hexagram } from '../../constants/iching';
 import { type Reading } from '../../types';
@@ -45,13 +46,20 @@ export default function IchingPage() {
         castLine,
         sendMessage,
         reset,
-        selectFromHistory
+        selectFromHistory,
+        setOnXpGain
     } = useOracle();
 
     const [inputValue, setInputValue] = useState('');
     const [showHistory, setShowHistory] = useState(false);
     const [selectedHexagram, setSelectedHexagram] = useState<Hexagram | null>(null);
     const [isSaved, setIsSaved] = useState(false);
+    
+    const { xpGain, showXpGain, clearXpGain } = useXpGain();
+    
+    useEffect(() => {
+        setOnXpGain(showXpGain);
+    }, [showXpGain, setOnXpGain]);
 
     const {
         isTypingFinished,
@@ -99,6 +107,13 @@ export default function IchingPage() {
 
     return (
         <div style={cssBg} className="flex flex-col font-sans min-h-[calc(100vh-80px)]">
+            {xpGain && (
+                <XpGainToast 
+                    xpGained={xpGain.gained} 
+                    totalXp={xpGain.total} 
+                    onComplete={clearXpGain} 
+                />
+            )}
             <main className="flex-1 max-w-4xl mx-auto w-full flex flex-col gap-0"
                 style={{ borderLeft: '1px solid color-mix(in srgb, var(--fg) 6%, transparent)', borderRight: '1px solid color-mix(in srgb, var(--fg) 6%, transparent)' }}
             >

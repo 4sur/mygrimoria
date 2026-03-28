@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { type LineValue, type Reading, type Message } from '../types';
 import { getHexagramByBinary, type Hexagram } from '../constants/iching';
 import { interpretHexagram, chatWithMaster, getHistory } from '../services/api';
@@ -7,6 +7,12 @@ import { trackReadingCreated } from '../services/analytics';
 
 export const useOracle = () => {
     const [lines, setLines] = useState<LineValue[]>([]);
+    const [lastXpGain, setLastXpGain] = useState<any>(null);
+    const onXpGainRef = useRef<((xp: any) => void) | null>(null);
+
+    const setOnXpGain = useCallback((callback: (xp: any) => void) => {
+        onXpGainRef.current = callback;
+    }, []);
     const [isCasting, setIsCasting] = useState(false);
     const [reading, setReading] = useState<(Reading & { session_id?: string }) | null>(null);
     const [messages, setMessages] = useState<Message[]>([]);
@@ -97,12 +103,18 @@ export const useOracle = () => {
             } : undefined;
             
             const data = await interpretHexagram(hexagramData, finalLines, question, resultantHexagramData);
-            const { text, session_id } = data;
+            const { text, session_id, xp } = data;
 
             const enrichedReading = { ...newReading, session_id };
             setReading(enrichedReading);
             setMessages([{ role: 'model', text }]);
             setHistory(prev => [enrichedReading, ...prev.slice(1)]);
+            
+            if (xp) {
+                console.log(`+${xp.xp_gained} XP! Total: ${xp.total_xp}`);
+                setLastXpGain(xp);
+                onXpGainRef.current?.(xp);
+            }
             
             trackReadingCreated('iching', primaryHex.name);
         } catch (error) {
@@ -160,6 +172,8 @@ export const useOracle = () => {
         castLine,
         sendMessage,
         reset,
-        selectFromHistory
+        selectFromHistory,
+        lastXpGain,
+        setOnXpGain
     };
 };

@@ -18,6 +18,7 @@ from database import get_db
 from auth import get_current_user, sync_user_profile
 from models import OracleSession, IchingResult, TarotResult, RuneResult, AIInterpretation, OracleChatMessage
 from constants import MAJOR_ARCANA, ELDER_FUTHARK
+from gamification import add_xp, get_level_info, XP_REWARDS
 
 app = FastAPI(title="My Grimoria API")
 
@@ -217,9 +218,12 @@ Keep the tone calm, minimalist, and insightful. Use Markdown for formatting."""
         text=interpretation_text
     )
     db.add(ai_interp)
+    
+    # Award XP for reading
+    xp_result = await add_xp(user_profile, XP_REWARDS["reading"], db)
     await db.commit()
 
-    return {"text": interpretation_text, "session_id": str(session.id)}
+    return {"text": interpretation_text, "session_id": str(session.id), "xp": xp_result}
 
 @app.post("/api/iching/chat")
 async def chat_with_master(
@@ -330,9 +334,12 @@ async def interpret_tarot(
         text=interpretation_text
     )
     db.add(ai_interp)
+    
+    # Award XP for premium reading
+    xp_result = await add_xp(user_profile, XP_REWARDS["premium_reading"], db)
     await db.commit()
 
-    return {"text": interpretation_text, "session_id": str(session.id)}
+    return {"text": interpretation_text, "session_id": str(session.id), "xp": xp_result}
 
 @app.post("/api/tarot/chat")
 async def chat_with_tarot_reader(
@@ -431,9 +438,12 @@ async def interpret_runes(
         text=interpretation_text
     )
     db.add(ai_interp)
+    
+    # Award XP for premium reading
+    xp_result = await add_xp(user_profile, XP_REWARDS["premium_reading"], db)
     await db.commit()
 
-    return {"text": interpretation_text, "session_id": str(session.id)}
+    return {"text": interpretation_text, "session_id": str(session.id), "xp": xp_result}
 
 @app.post("/api/runes/chat")
 async def chat_with_runemaster(
@@ -517,9 +527,11 @@ async def save_chat_history(
             content=content
         )
         db.add(chat_msg)
-
+    
+    # Award XP for saving a reading
+    xp_result = await add_xp(user_profile, XP_REWARDS["save_reading"], db)
     await db.commit()
-    return {"status": "saved"}
+    return {"status": "saved", "xp": xp_result}
 
 @app.get("/api/me")
 async def get_my_profile(
@@ -527,7 +539,17 @@ async def get_my_profile(
     db: AsyncSession = Depends(get_db)
 ):
     profile = await sync_user_profile(current_user, db)
-    return profile
+    level_info = get_level_info(int(profile.xp or 0))
+    return {
+        "id": str(profile.id),
+        "email": profile.email,
+        "full_name": profile.full_name,
+        "level": profile.level,
+        "xp": profile.xp,
+        "credits": profile.credits,
+        "is_admin": profile.is_admin,
+        "level_info": level_info
+    }
 
 class ProfileUpdateRequest(BaseModel):
     display_name: Optional[str] = None

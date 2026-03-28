@@ -5,6 +5,14 @@ import { getProfile, updateProfile } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import { SkeletonText } from '../../components/Skeleton';
 
+interface LevelInfo {
+    level: number;
+    title: string;
+    xp: number;
+    xp_for_next: number | null;
+    progress: number;
+}
+
 interface ProfileData {
     id: string;
     email: string;
@@ -18,6 +26,7 @@ interface ProfileData {
     level: number;
     xp: number;
     credits: number;
+    level_info?: LevelInfo;
 }
 
 const cssBg = { backgroundColor: 'var(--bg)', color: 'var(--fg)' } as const;
@@ -289,9 +298,23 @@ export default function ProfilePage() {
                 </form>
 
                 {profile && (
-                    <div className="mt-12 text-center opacity-30">
-                        <p className="text-xs">
-                            Level {profile.level} • {profile.credits} credits
+                    <div className="mt-12 space-y-4">
+                        <div className="flex items-center justify-between text-xs uppercase tracking-widest opacity-40">
+                            <span>Nivel {profile.level}</span>
+                            <span>{profile.xp || 0} XP</span>
+                        </div>
+                        
+                        <div className="relative h-2 bg-ink/10 dark:bg-white/10 rounded-full overflow-hidden">
+                            <motion.div 
+                                className="absolute left-0 top-0 h-full bg-gradient-to-r from-amber-500 to-amber-300 dark:from-amber-400 dark:to-amber-200"
+                                initial={{ width: 0 }}
+                                animate={{ width: `${(profile.level_info?.progress || 0)}%` }}
+                                transition={{ duration: 1, ease: "easeOut" }}
+                            />
+                        </div>
+                        
+                        <p className="text-center text-xs opacity-30">
+                            {(profile.level_info?.title || "Buscador")}
                         </p>
                     </div>
                 )}

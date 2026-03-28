@@ -4,12 +4,21 @@ import { User } from '@supabase/supabase-js';
 import { getMyProfile } from '../services/api';
 import { setUserId, trackEvent, trackUserAction } from '../services/analytics';
 
+interface LevelInfo {
+    level: number;
+    title: string;
+    xp: number;
+    xp_for_next: number | null;
+    progress: number;
+}
+
 interface UserProfile {
     id: string;
     level: number;
     xp: number;
     credits: number;
     is_admin: boolean;
+    level_info?: LevelInfo;
 }
 
 interface AuthContextType {
