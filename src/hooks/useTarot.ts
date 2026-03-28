@@ -79,20 +79,20 @@ export const useTarot = () => {
     }, []);
 
     const handleDraw = useCallback(async (question: string) => {
-        setIsDrawing(true);
-
         if (drawnCount === 0) {
+            setIsDrawing(true);
             try {
                 const spreadData = await drawTarotCards();
                 setSpread(spreadData);
                 setDrawnCount(1);
+                setIsDrawing(false);
                 await fetchInterpretation(spreadData, question);
             } catch (err) {
                 console.error(err);
-            } finally {
                 setIsDrawing(false);
             }
         } else if (drawnCount < 3) {
+            setIsDrawing(true);
             setTimeout(() => {
                 setDrawnCount(c => c + 1);
                 setIsDrawing(false);

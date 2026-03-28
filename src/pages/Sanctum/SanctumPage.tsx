@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { getHistory, deleteReading, toggleFavorite } from '../../services/api';
 import ReactMarkdown from 'react-markdown';
+import { SkeletonText } from '../../components/Skeleton';
 import {
     User,
     Cloud,
@@ -301,8 +302,10 @@ const SanctumPage: React.FC = () => {
 
                             <div className="space-y-4 pt-4">
                                 {isLoading ? (
-                                    <div className="py-20 flex justify-center opacity-20">
-                                        <Loader2 className="animate-spin" size={32} />
+                                    <div className="py-20 space-y-6 px-6">
+                                        <SkeletonText lines={1} className="h-20 w-full" />
+                                        <SkeletonText lines={1} className="h-20 w-full" />
+                                        <SkeletonText lines={1} className="h-20 w-full" />
                                     </div>
                                 ) : readings.length === 0 ? (
                                     <div className="py-20 text-center opacity-30 font-serif italic text-xl">

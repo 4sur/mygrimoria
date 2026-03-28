@@ -3,6 +3,7 @@ import { type LineValue, type Reading, type Message } from '../types';
 import { getHexagramByBinary, type Hexagram } from '../constants/iching';
 import { interpretHexagram, chatWithMaster, getHistory } from '../services/api';
 import { useOracleIntent } from '../context/OracleIntentContext';
+import { trackReadingCreated } from '../services/analytics';
 
 export const useOracle = () => {
     const [lines, setLines] = useState<LineValue[]>([]);
@@ -102,6 +103,8 @@ export const useOracle = () => {
             setReading(enrichedReading);
             setMessages([{ role: 'model', text }]);
             setHistory(prev => [enrichedReading, ...prev.slice(1)]);
+            
+            trackReadingCreated('iching', primaryHex.name);
         } catch (error) {
             console.error(error);
             setMessages([{ role: 'model', text: "The oracle is silent. Please try again later." }]);

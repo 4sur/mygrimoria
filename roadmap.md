@@ -61,14 +61,14 @@
 
 ### Fase 4 — UX/UI Mejoras
 
-- [ ] Añadir error boundaries
-- [ ] Mejorar estados de carga
+- [x] Añadir error boundaries
+- [x] Mejorar estados de carga
 - [ ] Añadir modo offline (cachear lecturas)
 
 ### Fase 5 — Analytics
 
-- [ ] Implementar tracking de eventos básicos
-- [ ] Añadir error reporting (Sentry)
+- [x] Implementar tracking de eventos básicos
+- [x] Añadir error reporting (Sentry)
 
 ### Fase 6 — Gamificación (Futuro)
 

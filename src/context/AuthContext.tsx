@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { supabase } from '../lib/supabase';
 import { User } from '@supabase/supabase-js';
 import { getMyProfile } from '../services/api';
+import { setUserId, trackEvent, trackUserAction } from '../services/analytics';
 
 interface UserProfile {
     id: string;
@@ -43,7 +44,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         supabase.auth.getSession().then(({ data: { session } }) => {
             const u = session?.user ?? null;
             setUser(u);
-            if (u) refreshProfile();
+            if (u) {
+                setUserId(u.id);
+                trackEvent('session_started', { user_id: u.id });
+                refreshProfile();
+            }
             setIsLoading(false);
         });
 
@@ -62,7 +67,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const login = async (email: string, password: string) => {
         const { data, error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        if (data.session) await refreshProfile();
+        if (data.session) {
+            setUserId(data.session.user.id);
+            trackUserAction('user_login', { method: 'email' });
+            await refreshProfile();
+        }
     };
 
     const loginWithProvider = async (provider: 'google' | 'apple' | 'azure') => {

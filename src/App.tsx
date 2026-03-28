@@ -14,13 +14,15 @@ import ProfilePage from './pages/Profile/ProfilePage';
 import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute } from './components/Auth/ProtectedRoute';
 import { OracleProvider } from './context/OracleIntentContext';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 export default function App() {
   return (
-    <Router>
-      <AuthProvider>
-        <OracleProvider>
-          <Routes>
+    <ErrorBoundary>
+      <Router>
+        <AuthProvider>
+          <OracleProvider>
+            <Routes>
             <Route path="/" element={<Layout />}>
               <Route index element={<Home />} />
               <Route path="blog" element={<Blog />} />
@@ -58,8 +60,9 @@ export default function App() {
               <Route path="*" element={<Navigate to="/" replace />} />
             </Route>
           </Routes>
-        </OracleProvider>
-      </AuthProvider>
-    </Router>
+          </OracleProvider>
+        </AuthProvider>
+      </Router>
+    </ErrorBoundary>
   );
 }

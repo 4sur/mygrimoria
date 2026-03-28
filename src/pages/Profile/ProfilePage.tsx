@@ -3,6 +3,7 @@ import { motion } from 'motion/react';
 import { User, MapPin, Calendar, Heart, Sparkles, Save, Loader2 } from 'lucide-react';
 import { getProfile, updateProfile } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
+import { SkeletonText } from '../../components/Skeleton';
 
 interface ProfileData {
     id: string;
@@ -104,8 +105,22 @@ export default function ProfilePage() {
 
     if (loading) {
         return (
-            <div style={cssBg} className="min-h-[calc(100vh-80px)] flex items-center justify-center">
-                <Loader2 className="animate-spin opacity-40" size={32} />
+            <div style={cssBg} className="min-h-[calc(100vh-80px)] py-12 px-6">
+                <main className="max-w-2xl mx-auto space-y-8">
+                    <div className="text-center mb-12 space-y-4">
+                        <SkeletonText lines={1} className="h-10 w-64 mx-auto" />
+                        <SkeletonText lines={2} className="h-4 w-80 mx-auto" />
+                    </div>
+                    <div className="space-y-6 p-8" style={cssSurface}>
+                        <SkeletonText lines={4} />
+                    </div>
+                    <div className="space-y-6 p-8" style={cssSurface}>
+                        <SkeletonText lines={5} />
+                    </div>
+                    <div className="space-y-6 p-8" style={cssSurface}>
+                        <SkeletonText lines={3} />
+                    </div>
+                </main>
             </div>
         );
     }
