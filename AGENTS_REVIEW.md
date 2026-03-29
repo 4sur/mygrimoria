@@ -46,8 +46,35 @@
 
 ## 📁 Informes Completos
 
+### Reviews Técnicos
 Ver archivos en `docs/review/`:
 - `backend_review.md`
 - `security_review.md`
 - `performance_review.md`
 - `mobile_review.md`
+
+### Monetización & Growth (docs/monetization/)
+| # | Agente | Archivo |
+|---|--------|---------|
+| 1 | PM (RICE) | `pm_monetization_review.md` |
+| 2 | Marketing | `marketing_strategy.md` |
+| 3 | Socratic | `socratic_review.md` |
+| 4 | Data/Analytics | `data_metrics.md` |
+
+---
+
+## 🎯 Resumen: Top 5 Features Priorizadas (RICE)
+
+| Rank | Feature | RICE | Categoría |
+|------|---------|------|-----------|
+| 1 | Lecturas básicas gratuitas | 5,000 | Freemium |
+| 2 | Lecturas premium por IA | 4,500 | Monetización |
+| 3 | Follow-up conversacional | 1,600 | Diferenciador |
+| 4 | Rachas diarias | 1,333 | Gamificación |
+| 5 | Sistema de niveles | 1,200 | Gamificación |
+
+### Roadmap Propuesto
+- **Fase 1 (Sem 1-4):** Foundation - Lecturas gratuitas + Niveles + Rachas
+- **Fase 2 (Sem 5-10):** Monetización - Suscripciones + Premium IA + IAP
+- **Fase 3 (Sem 11-16):** Diferenciación - Follow-up + Memoria IA + Journal
+- **Fase 4 (Sem 17+):** Engagement - Logros + Misiones + Comunidad
