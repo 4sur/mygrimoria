@@ -146,3 +146,16 @@ export const deleteReading = async (sessionId: string) => {
 export const toggleFavorite = async (sessionId: string) => {
     return api.post(`/api/sessions/${sessionId}/favorite`, {});
 };
+
+// Token packages
+export const getTokenPackages = async () => {
+    return api.get('/api/tokens/packages');
+};
+
+export const purchaseTokens = async (packageId: string) => {
+    return api.post('/api/tokens/purchase', { package_id: packageId });
+};
+
+export const addFreeTokens = async () => {
+    return api.post('/api/tokens/add-free', {});
+};

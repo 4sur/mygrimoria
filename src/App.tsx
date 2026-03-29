@@ -11,6 +11,7 @@ import RunesPage from './pages/Runes';
 import LoginPage from './pages/Login/LoginPage';
 import SanctumPage from './pages/Sanctum/SanctumPage';
 import ProfilePage from './pages/Profile/ProfilePage';
+import TokensPage from './pages/Tokens';
 import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute } from './components/Auth/ProtectedRoute';
 import { OracleProvider } from './context/OracleIntentContext';
@@ -54,6 +55,14 @@ export default function App() {
                 element={
                   <ProtectedRoute>
                     <ProfilePage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="tokens"
+                element={
+                  <ProtectedRoute>
+                    <TokensPage />
                   </ProtectedRoute>
                 }
               />

@@ -41,6 +41,7 @@ export const Header: React.FC = () => {
                     <Link to="/oracle" className={`zen-nav-link ${isActive('/oracle') || isActive('/oracle/iching') ? 'zen-nav-link-active' : ''}`}>Oracle</Link>
                     {isLoggedIn && (
                         <>
+                            <Link to="/tokens" className={`zen-nav-link ${isActive('/tokens') ? 'zen-nav-link-active' : ''}`}>Tokens</Link>
                             <Link to="/sanctum" className={`zen-nav-link ${isActive('/sanctum') ? 'zen-nav-link-active' : ''}`}>Sanctum</Link>
                             <Link to="/profile" className={`zen-nav-link ${isActive('/profile') ? 'zen-nav-link-active' : ''}`}>Profile</Link>
                         </>

@@ -728,6 +728,101 @@ async def toggle_favorite(
     
     return {"is_favorite": session.is_favorite}
 
+# === Token Packages ===
+TOKEN_PACKAGES = [
+    {
+        "id": "starter",
+        "name": "Starter",
+        "credits": 10,
+        "price": 4.99,
+        "popular": False,
+        "description": "Perfect for trying out"
+    },
+    {
+        "id": "seeker",
+        "name": "Seeker",
+        "credits": 30,
+        "price": 9.99,
+        "popular": True,
+        "description": "Most popular choice"
+    },
+    {
+        "id": "oracle",
+        "name": "Oracle",
+        "credits": 75,
+        "price": 19.99,
+        "popular": False,
+        "description": "For the devoted seeker"
+    },
+    {
+        "id": "master",
+        "name": "Master",
+        "credits": 200,
+        "price": 39.99,
+        "popular": False,
+        "description": "Maximum value"
+    },
+]
+
+class PurchaseRequest(BaseModel):
+    package_id: str
+
+@app.get("/api/tokens/packages")
+async def get_token_packages():
+    """Get available token packages."""
+    return {"packages": TOKEN_PACKAGES}
+
+@app.post("/api/tokens/purchase")
+async def purchase_tokens(
+    request: PurchaseRequest,
+    current_user: dict = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    """Purchase tokens (mock implementation - replace with real payment gateway)."""
+    user_profile = await sync_user_profile(current_user, db)
+    
+    package = next((p for p in TOKEN_PACKAGES if p["id"] == request.package_id), None)
+    if not package:
+        raise HTTPException(status_code=400, detail="Invalid package")
+    
+    # In a real implementation, you would:
+    # 1. Process payment with Stripe/PayPal
+    # 2. Verify payment success
+    # 3. Then add credits
+    
+    # For now, we simulate a successful purchase
+    user_profile.credits = (user_profile.credits or 0) + package["credits"]
+    await db.commit()
+    
+    transaction_id = f"txn_{datetime.now().strftime('%Y%m%d%H%M%S')}_{user_profile.id[:8]}"
+    
+    return {
+        "success": True,
+        "credits_added": package["credits"],
+        "new_balance": user_profile.credits,
+        "transaction_id": transaction_id,
+        "message": f"Added {package['credits']} credits to your account"
+    }
+
+@app.post("/api/tokens/add-free")
+async def add_free_tokens(
+    current_user: dict = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    """Add free daily tokens (for testing/demo purposes)."""
+    user_profile = await sync_user_profile(current_user, db)
+    
+    # Demo: Add 3 free credits per day (for testing)
+    user_profile.credits = (user_profile.credits or 0) + 3
+    await db.commit()
+    
+    return {
+        "success": True,
+        "credits_added": 3,
+        "new_balance": user_profile.credits,
+        "message": "Added 3 free credits (demo)"
+    }
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
