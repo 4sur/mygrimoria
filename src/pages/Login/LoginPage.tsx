@@ -11,7 +11,8 @@ const LoginPage: React.FC = () => {
     const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const { login, loginWithProvider } = useAuth();
+    const [isSignup, setIsSignup] = useState(false);
+    const { login, signup, loginWithProvider } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -22,10 +23,15 @@ const LoginPage: React.FC = () => {
         setIsLoading(true);
         setError(null);
         try {
-            await login(email, password);
-            navigate(from, { replace: true });
+            if (isSignup) {
+                await signup(email, password);
+                navigate(from, { replace: true });
+            } else {
+                await login(email, password);
+                navigate(from, { replace: true });
+            }
         } catch (err: any) {
-            setError(err.message || 'Failed to login');
+            setError(err.message || (isSignup ? 'Failed to sign up' : 'Failed to login'));
         } finally {
             setIsLoading(false);
         }
@@ -64,8 +70,12 @@ const LoginPage: React.FC = () => {
                         >
                             <LogIn className="text-white dark:text-ink" size={32} />
                         </motion.div>
-                        <h2 className="text-3xl font-serif font-bold text-ink dark:text-white mb-2">Welcome, Seeker</h2>
-                        <p className="text-ink/60 dark:text-white/60">Enter the path to your Digital Sanctum</p>
+                        <h2 className="text-3xl font-serif font-bold text-ink dark:text-white mb-2">
+                            {isSignup ? 'Begin Your Journey' : 'Welcome, Seeker'}
+                        </h2>
+                        <p className="text-ink/60 dark:text-white/60">
+                            {isSignup ? 'Create your account to consult the oracles' : 'Enter the path to your Digital Sanctum'}
+                        </p>
                     </div>
 
                     {error && (
@@ -115,7 +125,7 @@ const LoginPage: React.FC = () => {
                             className="w-full bg-ink dark:bg-white text-white dark:text-ink rounded-2xl py-5 text-sm font-bold tracking-widest uppercase transition-all hover:opacity-90 disabled:opacity-50 relative overflow-hidden group shadow-xl"
                         >
                             <span className={`flex items-center justify-center gap-2 transition-transform duration-300 ${isLoading ? 'opacity-0' : 'group-hover:-translate-x-1'}`}>
-                                Sign In <ArrowRight size={20} />
+                                {isSignup ? 'Create Account' : 'Sign In'} <ArrowRight size={20} />
                             </span>
                             {isLoading && (
                                 <div className="absolute inset-0 flex items-center justify-center">
@@ -124,6 +134,17 @@ const LoginPage: React.FC = () => {
                             )}
                         </button>
                     </form>
+
+                    <div className="mt-6 text-center">
+                        <button
+                            type="button"
+                            onClick={() => { setIsSignup(!isSignup); setError(null); }}
+                            className="text-sm text-ink/60 dark:text-white/60 hover:text-ink dark:hover:text-white transition-colors"
+                        >
+                            {isSignup ? 'Already have an account?' : "Don't have an account?"}{' '}
+                            <span className="font-bold underline">{isSignup ? 'Sign In' : 'Sign Up'}</span>
+                        </button>
+                    </div>
 
                     <div className="mt-8 relative pt-8 border-t border-ink/5 dark:border-white/5">
                         <p className="absolute -top-3 left-1/2 -translate-x-1/2 bg-white dark:bg-ink px-4 text-[10px] uppercase tracking-widest font-bold opacity-30">Or continue with</p>

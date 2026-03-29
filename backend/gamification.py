@@ -44,24 +44,33 @@ def get_title_for_level(level: int) -> str:
     return LEVEL_TITLES[level - 1][1]
 
 def get_level_info(xp: int) -> dict:
+    """
+    Calculate level based on XP.
+    Level 1 (Buscador): 0-99 XP
+    Level 2 (Iniciado): 100-249 XP
+    etc.
+    """
     current_level = 1
     current_title = "Buscador"
-    next_level_xp = LEVEL_TITLES[1][0] if len(LEVEL_TITLES) > 1 else 100
-    prev_level_xp = 0
     
-    for i, (threshold, title) in enumerate(LEVEL_TITLES):
+    # Find which level bracket the XP falls into
+    for i in range(len(LEVEL_TITLES)):
+        threshold = LEVEL_TITLES[i][0]
         if xp < threshold:
-            current_level = i
+            # Previous level
+            current_level = i  # i=1 means level 2
             current_title = LEVEL_TITLES[i - 1][1] if i > 0 else LEVEL_TITLES[0][1]
-            next_level_xp = threshold
             prev_level_xp = LEVEL_TITLES[i - 1][0] if i > 0 else 0
+            next_level_xp = threshold
             break
     else:
+        # Max level reached
         current_level = len(LEVEL_TITLES)
         current_title = LEVEL_TITLES[-1][1]
-        next_level_xp = None
         prev_level_xp = LEVEL_TITLES[-2][0] if len(LEVEL_TITLES) > 1 else 0
+        next_level_xp = None
     
+    # Calculate progress percentage
     if next_level_xp and next_level_xp > prev_level_xp:
         progress = ((xp - prev_level_xp) / (next_level_xp - prev_level_xp)) * 100
     else:

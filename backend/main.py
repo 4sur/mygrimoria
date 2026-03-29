@@ -544,7 +544,7 @@ async def get_my_profile(
         "id": str(profile.id),
         "email": profile.email,
         "full_name": profile.full_name,
-        "level": profile.level,
+        "level": level_info["level"],  # Use calculated level, not stored
         "xp": profile.xp,
         "credits": profile.credits,
         "is_admin": profile.is_admin,
