@@ -226,7 +226,7 @@ const SanctumPage: React.FC = () => {
         }
     };
 
-    const username = user?.email?.split('@')[0] || 'Acolyte';
+    const username = profile?.full_name || profile?.display_name || user?.email?.split('@')[0] || 'Acolyte';
 
     return (
         <div className="max-w-[1400px] mx-auto px-6 lg:px-12 py-12 lg:py-20">

@@ -8,7 +8,7 @@ import { Zap, Star, BookOpen, Sparkles } from 'lucide-react';
 
 const AuthenticatedHero: React.FC = () => {
     const { user, profile } = useAuth();
-    const username = user?.email?.split('@')[0] || 'Acolyte';
+    const username = profile?.full_name || profile?.display_name || user?.email?.split('@')[0] || 'Acolyte';
     const isLowCredits = (profile?.credits ?? 50) < 10;
 
     return (

@@ -117,9 +117,13 @@ export const useOracle = () => {
             }
             
             trackReadingCreated('iching', primaryHex.name);
-        } catch (error) {
+        } catch (error: any) {
             console.error(error);
-            setMessages([{ role: 'model', text: "The oracle is silent. Please try again later." }]);
+            if (error.status === 402 || error?.response?.status === 402) {
+                setMessages([{ role: 'model', text: "You need more credits to consult the oracle. Visit /tokens to acquire more." }]);
+            } else {
+                setMessages([{ role: 'model', text: "The oracle is silent. Please try again later." }]);
+            }
         } finally {
             setIsLoading(false);
         }

@@ -126,6 +126,17 @@ async def interpret_hexagram(
     # Ensure user profile exists
     user_profile = await sync_user_profile(current_user, db)
     
+    # Check credits (1 credit needed per reading)
+    current_credits = user_profile.credits or 0
+    if current_credits < 1:
+        raise HTTPException(
+            status_code=402,
+            detail="Insufficient credits. Visit /tokens to acquire more."
+        )
+    
+    # Deduct credit
+    user_profile.credits = current_credits - 1
+    
     # Build user context for the prompt
     user_context = build_user_context(user_profile)
     
@@ -231,6 +242,16 @@ async def chat_with_master(
     current_user: dict = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)
 ):
+    # Check credits for chat (1 credit)
+    user_profile = await sync_user_profile(current_user, db)
+    current_credits = user_profile.credits or 0
+    if current_credits < 1:
+        raise HTTPException(
+            status_code=402,
+            detail="Insufficient credits. Visit /tokens to acquire more."
+        )
+    user_profile.credits = current_credits - 1
+    
     system_instruction = "You are a wise I Ching master. Your tone is calm, minimalist, and zen. You help users understand the wisdom of the I Ching. Keep responses concise but profound."
     
     messages = [{"role": "system", "content": system_instruction}]
@@ -277,6 +298,17 @@ async def interpret_tarot(
 ):
     # Ensure user profile exists
     user_profile = await sync_user_profile(current_user, db)
+    
+    # Check credits (1 credit needed per reading)
+    current_credits = user_profile.credits or 0
+    if current_credits < 1:
+        raise HTTPException(
+            status_code=402,
+            detail="Insufficient credits. Visit /tokens to acquire more."
+        )
+    
+    # Deduct credit
+    user_profile.credits = current_credits - 1
     
     # Build user context for the prompt
     user_context = build_user_context(user_profile)
@@ -347,6 +379,15 @@ async def chat_with_tarot_reader(
     current_user: dict = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)
 ):
+    # Check credits for chat (1 credit)
+    user_profile = await sync_user_profile(current_user, db)
+    current_credits = user_profile.credits or 0
+    if current_credits < 1:
+        raise HTTPException(
+            status_code=402,
+            detail="Insufficient credits. Visit /tokens to acquire more."
+        )
+    user_profile.credits = current_credits - 1
     system_instruction = "You are a wise Tarot reader with a calm, zen-like presence. Your tone is insightful and encouraging. You help users find meaning in the cards they drew."
     
     messages = [{"role": "system", "content": system_instruction}]
@@ -381,6 +422,17 @@ async def interpret_runes(
 ):
     # Ensure user profile exists
     user_profile = await sync_user_profile(current_user, db)
+    
+    # Check credits (1 credit needed per reading)
+    current_credits = user_profile.credits or 0
+    if current_credits < 1:
+        raise HTTPException(
+            status_code=402,
+            detail="Insufficient credits. Visit /tokens to acquire more."
+        )
+    
+    # Deduct credit
+    user_profile.credits = current_credits - 1
     
     # Build user context for the prompt
     user_context = build_user_context(user_profile)
@@ -451,6 +503,16 @@ async def chat_with_runemaster(
     current_user: dict = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)
 ):
+    # Check credits for chat (1 credit)
+    user_profile = await sync_user_profile(current_user, db)
+    current_credits = user_profile.credits or 0
+    if current_credits < 1:
+        raise HTTPException(
+            status_code=402,
+            detail="Insufficient credits. Visit /tokens to acquire more."
+        )
+    user_profile.credits = current_credits - 1
+    
     system_instruction = "You are a wise Norse Runemaster. Your tone is grounded, ancient, and direct. You help users understand the wisdom of the Elder Futhark runes. Keep responses concise, focusing on natural cycles, inner strength, and truth."
     
     messages = [{"role": "system", "content": system_instruction}]
@@ -544,6 +606,7 @@ async def get_my_profile(
         "id": str(profile.id),
         "email": profile.email,
         "full_name": profile.full_name,
+        "display_name": profile.display_name,
         "level": level_info["level"],  # Use calculated level, not stored
         "xp": profile.xp,
         "credits": profile.credits,

@@ -18,6 +18,8 @@ interface UserProfile {
     xp: number;
     credits: number;
     is_admin: boolean;
+    full_name?: string | null;
+    display_name?: string | null;
     level_info?: LevelInfo;
 }
 

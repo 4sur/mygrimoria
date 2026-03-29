@@ -110,7 +110,8 @@ export default function IchingPage() {
             {xpGain && (
                 <XpGainToast 
                     xpGained={xpGain.gained} 
-                    totalXp={xpGain.total} 
+                    totalXp={xpGain.total}
+                    creditsEarned={xpGain.creditsEarned}
                     onComplete={clearXpGain} 
                 />
             )}

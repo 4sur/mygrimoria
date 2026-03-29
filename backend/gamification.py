@@ -97,15 +97,34 @@ def check_level_up(old_xp: int, new_xp: int) -> Optional[dict]:
         }
     return None
 
+CREDITS_REWARD_ON_LEVEL_UP = {
+    2: 5,   # Level up to 2 = 5 credits
+    3: 10,
+    4: 15,
+    5: 20,
+    6: 25,
+    7: 30,
+    8: 35,
+    9: 40,
+    10: 50,
+}
+
 async def add_xp(profile: "UserProfile", amount: int, db) -> dict:
     old_xp = int(profile.xp) if profile.xp else 0
     new_xp = old_xp + amount
     
     profile.xp = new_xp
     new_level = get_level_info(new_xp)["level"]
+    old_level = get_level_info(old_xp)["level"]
     profile.level = new_level
     
     level_up = check_level_up(old_xp, new_xp)
+    
+    credits_reward = 0
+    if level_up:
+        credits_reward = CREDITS_REWARD_ON_LEVEL_UP.get(new_level, 0)
+        if credits_reward > 0:
+            profile.credits = (profile.credits or 0) + credits_reward
     
     return {
         "xp_gained": amount,
@@ -113,5 +132,6 @@ async def add_xp(profile: "UserProfile", amount: int, db) -> dict:
         "level": new_level,
         "title": get_title_for_level(new_level),
         "leveled_up": level_up is not None,
-        "level_up_info": level_up
+        "level_up_info": level_up,
+        "credits_earned": credits_reward
     }
